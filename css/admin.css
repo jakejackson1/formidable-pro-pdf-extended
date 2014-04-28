@@ -1,0 +1,90 @@
+.fp_has_submenu {
+ position: relative;
+ display: inline-block;	
+}
+
+.fp_submenu { 
+    background-color: #F8F8F8;
+    border: 1px solid #DFDFDF;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    float: none;
+    padding: 0;
+    position: absolute;
+    z-index: 99;
+	left: 0;
+	top: 15px;
+	min-width: 160px;
+
+}
+
+.fp_submenu ul, .fp_submenu li {
+	margin: 0;
+	padding: 0;
+}
+
+.fp_submenu li a {
+ display: block;
+ padding: 2px 5px;
+}
+
+.formidable_page_formidable-entries .widefat th, .formidable_page_formidable-entries .widefat td {
+ overflow: visible;	
+}
+
+.fppdfe .inside > div {
+ clear: left;	
+ margin-bottom: 3px;
+}
+
+.fppdfe .inside > div > span {
+	float: left; 
+	width: 10em;
+	line-height: 27px;
+}
+
+
+#fppdfextended-setting .leftcolumn {
+	width: 50%;
+	float: left;
+}
+
+#fppdfextended-setting .rightcolumn {
+	margin-left: 55%;
+}
+
+#fppdfextended-setting ol, #fppdfextended-setting ul {
+margin-left: 25px;	
+}
+#fppdfextended-setting ul > li {
+list-style: disc;	
+}
+
+#fppdfextended-setting ol > li {
+list-style: decimal;	
+}
+
+#fppdfextended-setting ol li > ul, #fppdfextended-setting ul li > ul {
+margin: 5px 0 0 20px;
+}
+
+#fppdfextended-setting ul ul > li {
+	list-style: circle;
+}
+
+#fppdfextended-setting ol ul > li {
+list-style: disc;	
+}
+
+#fppdfextended-setting {
+display: none;	
+padding-bottom: 1.5em;
+}
+
+#poststuff #fppdfextended-setting h2 {
+ clear: none;	
+}
+
+#fppdfextended-setting .icon32 {
+display: none;	
+}

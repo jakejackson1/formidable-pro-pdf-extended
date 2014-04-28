@@ -1,0 +1,113 @@
+/**
+ * The following snippet of CSS styles the default templates and the example template
+ * DO NO REMOVE THESE STYLES.
+ */
+body {
+font-family:DejaVu Sans, Helvetica, sans-serif;
+letter-spacing: -0.2px;
+font-size: 14px;
+}
+
+
+
+/* FINISHED REQUIRED CSS */
+
+table {
+	border-collapse: collapse;
+	line-height: 135%;
+	border-bottom: 1px solid #dddddd;
+	width: 100%;
+}
+
+table tr {
+	
+}
+
+table tr.odd {
+	background-color: #EEEEEE;
+}
+
+table tr.even {
+	background-color: #FFFFFF;
+}
+
+table tr td, table tr th {
+ vertical-align: top;
+ padding: 7px 9px;
+ border-top: 1px solid #dddddd; 
+ text-align: left;	
+}
+
+table tr td.table-cell {
+ border: none;	
+}
+
+table tr .center {
+	text-align: center;	
+}
+
+table tr th {
+ width: 30%;	
+}
+
+table tr td {
+ width: 70%;	
+}
+
+.formidable-plus-table tr td {
+ vertical-align: middle;	
+}
+
+
+
+/*
+ * The block output
+ */
+div.container {
+ padding: 7px 9px;
+ border-top: 1px solid #dddddd; 
+ text-align: left;		
+}
+ 
+div.odd {
+	background-color: #EEEEEE;	
+}
+
+div.even {
+	background-color: #FFFFFF;	
+}
+ 
+.title {
+	font-weight: bold;
+}
+
+.value {
+		
+}
+
+/*
+ * No Style Template
+ */
+
+.no-style table {
+border: none;	
+}
+
+.no-style table tr.odd, .no-style table tr.even {
+	background-color: transparent;	
+}
+
+.no-style table tr td, .no-style table tr th {
+	border: none;
+}
+
+
+.signature {
+width: 180px;
+}
+
+.typed_signature {
+font-family: journal, DejaVuSansMono, serif; 
+font-size: 25px;	
+}
+ 
