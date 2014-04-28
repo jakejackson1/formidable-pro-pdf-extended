@@ -197,9 +197,9 @@
 			if( $f->type == 'table' && method_exists( 'FrmPlusEntryMetaHelper', 'frmplus_display_value_custom' ) )
 			{
 				if ( !self::$frmplus_action_added ){
-					add_action( 'frmplus_field_value_checkbox', 'FPPDF_Entry::convert_checkboxes_to_image' );
-					add_action( 'frmplus_field_value_radio', 'FPPDF_Entry::convert_checkboxes_to_image' );
-					add_action( 'frmplus_field_value_radioline', 'FPPDF_Entry::convert_checkboxes_to_image' );
+					add_action( 'frmplus_field_value_checkbox', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
+					add_action( 'frmplus_field_value_radio', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
+					add_action( 'frmplus_field_value_radioline', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
 					self::$frmplus_action_added = true;
 				}
 				$val = FrmPlusEntryMetaHelper::frmplus_display_value_custom( $prev_val, $f, array() );
@@ -210,12 +210,8 @@
 			if( ( $f->type == 'image' || $f->type == 'url' || $f->type == 'file' ))
 			{
 				if($type == 'array')				 
-				{
-					
-			
-			
+				{			
 					$array['field'][$f->id] = $val;
-					
 					$array['field'][$f->id . '.' . $fname] = $val;
 				}
 				else
@@ -451,7 +447,7 @@
 	{
 		static $tick, $cross;
 		if ( !isset( $tick ) ){
-			$tick = apply_filters( 'frmplus_pdf_tick', '<img alt="Yes" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/tick.png" />' );
+			$tick  = apply_filters( 'frmplus_pdf_tick', '<img alt="Yes" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/tick.png" />' );
 			$cross = apply_filters( 'frmplus_pdf_cross', '<img alt="No" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/cross.png" />' );
 		}
 		extract( $data );
