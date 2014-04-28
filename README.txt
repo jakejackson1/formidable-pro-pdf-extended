@@ -4,7 +4,7 @@ Donate link: http://www.formidablepropdfextended.com
 Tags: formidable, pro, pdf, extended, automation, attachment
 Requires at least: 3.6
 Tested up to: 3.6.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
