@@ -2,7 +2,7 @@
 
 	class FPPDF_Entry {
 		
-		private static $table_radios = array();
+		private static $frmplus_action_added = false;
 	
     public static function show_entry($atts){
         extract(shortcode_atts(array(
@@ -194,52 +194,15 @@
 
 			}		
 			
-			if( $f->type == 'table' && defined('FRMPLUS_PLUGIN_TITLE') )
+			if( $f->type == 'table' && method_exists( 'FrmPlusEntryMetaHelper', 'frmplus_display_value_custom' ) )
 			{
-				/*
-				 * There are quite a few minor formating issues with the Formidable Plus plugin
-				 * In light of that we will use its inbuild functions sparingly and build our own
-				 * custom output solution
-				 * 
-				 * Firstly, Get the table columns and rows				 
-				 */				 
-				 $table_cells = FrmPlusFieldsHelper::get_table_options($f->options);
-				
-				 /*
-				  * Set the user data
-				  */
-				  $table_data = $prev_val;
-				  
-				  /*
-				   * Get the formatted table data
-				   */
-				   $table_formated_data = self::get_table_html($table_cells, $table_data, $f->id);
-				  
-				 /*
-				  * Check if we want the info for the array or just output the HTML
-				  */ 	
-				  				  			  
-				  if($type == 'array')
-				  {					  	
-					  
-						$array['field'][$f->id] = array(
-							'title' => $fname,
-							'table_html' => $table_formated_data,
-							'table_cells' => $table_cells,
-							'table_data' => $table_data,						
-						);
-						
-						$array['field'][$f->id . '.' . $fname] = array(
-							'title' => $fname,
-							'table_html' => $table_formated_data,
-							'table_cells' => $table_cells,
-							'table_data' => $table_data,						
-						);						  
-				  }
-				  else
-				  {
-						$val = $table_formated_data;
-				  }
+				if ( !self::$frmplus_action_added ){
+					add_action( 'frmplus_field_value_checkbox', 'FPPDF_Entry::convert_checkboxes_to_image' );
+					add_action( 'frmplus_field_value_radio', 'FPPDF_Entry::convert_checkboxes_to_image' );
+					add_action( 'frmplus_field_value_radioline', 'FPPDF_Entry::convert_checkboxes_to_image' );
+					self::$frmplus_action_added = true;
+				}
+				$val = FrmPlusEntryMetaHelper::frmplus_display_value_custom( $prev_val, $f, array() );
 			}
 						
 			$val = (!is_array($val)) ? stripslashes($val) : $val;
@@ -480,171 +443,34 @@
 		return $array;
 	}
 	
-	/*
-	 * Function to format the Formidable Plus table data
+	/** 
+	 * Function to display tick or cross for a radioline or an option-less
+	 * checkbox or radio field in Formidable Plus
 	 */
-	 private static function get_table_html($table_cells, $table_data, $id)
-	 {
-		 	$row_header = false;
-			
-			$col_size = sizeof($table_cells[0]);
-			/*
-			 * Calculate if we need to include row names or only columns		
-			 */
-			 if(isset($table_cells[1]) && sizeof($table_cells[1]) > 0)
-			 {
-				$row_header = true;
-				$col_size++;
-			 }
-			 
-			 
-			 /*
-			  * Do column group
-			  */
-			  $col_group = self::get_table_col_group($row_header, $table_cells, $id);
-			  
-			 /*
-			  * Do column headings
-			  */ 
-			  $col_header = self::get_table_col_headers($row_header, $table_cells, $col_size, $id);
-
-			 /* 
-			  * Do table data
-			  */ 
-			  $table_formatted_data = self::get_table_formatted_data($row_header, $table_cells, $table_data, $id, $col_size);
-			  
-			  /*
-			   * Now lets build the table
-			   */
-			  $output = '<table id="formidable-plus-table-'.$id.'" class="formidable-plus-table" autosize="1">';		  
-			  $output .= $col_group . $col_header;			  			  
-			  $output .= $table_formatted_data;		  			  
-			  $output .= '</table>';
-
-			  return $output;
-
-	 }
-	 
-	 
-	 private static function get_table_formatted_data($row_header, $table_cells, $table_data, $id, $col_size)
-	 {
-			$output = '';
-			$i = 1;
-			$col_num = count($table_cells[0]);
-			$width = 100 / $col_size;
-			
-			$output .= '<tbody>';	
-
-			foreach($table_data	as $row_id => $row)
-			{
-				$output .= '<tr>';
-				
-				/*
-				 * Check if we will include any row headings
-				 */
-				 if($row_header)
-				 {
-					$row_value = (isset($table_cells[1]['row_' . $i])) ? $table_cells[1]['row_' . $i] : ''; 
-					$output .= '<td id="table-header-'.$id.'-row-'. $i .'"><em>' . $row_value . '<em></td>'; 					
-				 }
-				 
-				 /*
-				  * Now include each row's data
-				  * Use the column number count to prevent any errors
-				  */
-				  for($j = 0; $j < $col_num; $j++)
-				  {
-					  $data = (isset($row[$j])) ? $row[$j] : '';
-					  
-					  /*
-					   * Sniff self::$table_radios to see if radio fields are added
-					   */
-					   $class = '';
-					   
-					   if(in_array($j, self::$table_radios))
-					   {
-						   $class .= 'center';
-						   $data = self::convert_checkboxes_to_image($data);
-					   }					  
-					  $output .= '<td class="'. $class .'" id="table-'.$id.'-data-row-'.$i.'-cell-'.$j.'" style="width: '.$width.'%;">'. $data .'</td>';
-				  }
-				
-				$output .= '</tr>';	
-				
-				$i++;				
+	public static function convert_checkboxes_to_image($data)
+	{
+		static $tick, $cross;
+		if ( !isset( $tick ) ){
+			$tick = apply_filters( 'frmplus_pdf_tick', '<img alt="Yes" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/tick.png" />' );
+			$cross = apply_filters( 'frmplus_pdf_cross', '<img alt="No" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/cross.png" />' );
+		}
+		extract( $data );
+		if ( empty( $options['options'] ) ){
+			// There are no options for this cell, which means it is either on or off
+			// Display $tick or $cross accordingly
+			echo $value == FrmPlusFieldsHelper::get_simple_on_value() ? $tick : $cross;
+		}
+		else{
+			// Default to how we would display the value normally
+			if (is_array($value)){
+				echo implode(', ',$value);
 			}
-			
-			$output .= '</tbody>';	
-			
-			/* reset the radio tracker as we have finished with it for this table */
-			self::$table_radios = array();
-			
-			return $output;
-	 }
-	 
-	 private static function get_table_col_headers($row_header, $table_cells, $col_size, $id)
-	 {
-		  $output = '';
-  
-		  $output .= '<thead><tr>';
-		  if($row_header)
-		  {
-				$output .= '<th id="table-header-'.$id.'-col-row" ></th>';  
-		  }
-
-		  foreach($table_cells[0] as $col_id => $col)
-		  {
-			  $class = '';
-			 /*
-			  * See if this column is a radio button
-			  */			  			  
-			  if(substr($col, 0, 9) == 'checkbox:')
-			  {
-				    $class .= ' center';
-				  	self::$table_radios[] = (int) str_replace('col_', '', $col_id) - 1;
-			  }
-			 $output .= '<th class="'. $class .'" id="table-header-'.$id.'-'.$col_id.'">' . FrmPlusFieldsHelper::parse_option($col,'name') . '</th>';
-		  }
-		  $output .= '</tr></thead>';	
-		  
-		  return $output;		 
-	 }
-	 
-	 
-	 private static function get_table_col_group($row_header, $table_cells, $id)
-	 {
-		  $output = '';
-		  
-		  $output .= '<colgroup>';
-		  if($row_header)
-		  {
-				$output .= '<col id="table-'.$id.'-col-row" />';  
-		  }
-		  
-		  foreach($table_cells[0] as $col_id => $col)
-		  {
-			 $output .= '<col id="table-'.$id.'-'.$col_id.'" />';
-		  }
-		  $output .= '</colgroup>';	
-		  
-		  return $output;	 
-	 }
-	 
-	 private static function convert_checkboxes_to_image($data)
-	 {
-			if($data == 'on')
-			{
-				/*
-				 * Show a tick image
-				 */	
-				 return '<img alt="Yes" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/tick.png" />';
+			elseif ($value == ''){
+				echo '&nbsp;';
 			}
-			else
-			{
-				/*
-				 * Show a cross image
-				 */
-				 return '<img alt="No" width="16" src="'.FP_PDF_PLUGIN_DIR.'images/cross.png" />';				 
+			else{
+				echo str_replace("\n","<br/>",$value);
 			}
+		}
 	 }
 }
