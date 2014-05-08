@@ -275,6 +275,12 @@ class FPPDF_Core extends FPPDFGenerator
 
 		 $templates = $this->get_template($form_id, true);
 
+		/* exit early if templates not found */
+		if($templates === false)
+		{
+			return;
+		}			 
+
 		?>
         <div class="postbox fppdfe">
         	<h3 class="hndle"><span>PDFs</span></h3>
@@ -330,6 +336,12 @@ class FPPDF_Core extends FPPDFGenerator
 		 global $fppdf;
 
 		$templates = $this->get_template($form_id, true);
+
+		/* exit early if templates not found */
+		if($templates === false)
+		{
+			return;
+		}		
 
 		if(is_array($templates))
 		{
@@ -746,46 +758,78 @@ class FPPDF_Core extends FPPDFGenerator
 	 * Checks if a configuration index is found
 	 * If not, we will set up defaults defined in configuration.php if they exist
 	 */
-	public function check_configuration($form_id)
+	public static function check_configuration($form_id, $template = '')
 	{
 
-		global $fp_pdf_default_configuration;
+		global $fp_pdf_default_configuration, $fppdf;
 
 		/*
-		 * Check if configuration index already defined
+		 * Check if configuration index already defined		 
 		 */
-		if(empty($this->index[$form_id]))
+		if(empty($fppdf->index[$form_id]))
 		{
 
 			/*
 			 * Check if a default configuration is defined
-			 */
-			if(is_array($fp_pdf_default_configuration) && sizeof($fp_pdf_default_configuration) > 0)
+			 */			
+			if(is_array($fp_pdf_default_configuration) && sizeof($fp_pdf_default_configuration) > 0 && FPPDF_SET_DEFAULT_TEMPLATE === true)
 			{
 
 				/*
-				 * Add form_id to the defualt configuration
+				 * Add form_id to the defualt configuration				 
 				 */
 				 $default_configuration = array_merge($fp_pdf_default_configuration, array('form_id' => $form_id));
-
+				 
 				/*
 				 * There is no configuration index and there is a default index so add the defaults to this form's configuration
 				 */
-				 $this->configuration[] = $default_configuration;
-
+				 $fppdf->configuration[] = $default_configuration;
+				 
 				 /* get the id of the newly added configuration */
-				 end($this->configuration);
-				 $index = key($this->configuration);
-
+				 end($fppdf->configuration);
+				 $index = key($fppdf->configuration);
+				 
 				 /* now add to the index */
-				 $this->assign_index($form_id, $index);
-
+				 $fppdf->assign_index($form_id, $index);				  
+				 
 			}
 		}
 		else
 		{
-			$index = $this->index[$form_id];
+			/* if there are multiple indexes for a form we will look for the one with the matching template */
+			if(sizeof($fppdf->index[$form_id]) > 1 && strlen($template) > 0 )
+			{
+
+				/*
+				 * Check if $_GET['aid'] present which will give us the index when multi templates assigned
+				 */
+				 if(isset($_GET['aid']) && (int) $_GET['aid'] > 0)
+				 {
+					$aid = (int) $_GET['aid'] - 1;
+					if(isset($fppdf->index[$form_id][$aid]))
+					{
+						return $fppdf->index[$form_id][$aid];
+					}					
+				 }				
+
+				/*
+				 * If aid not present we'll match against the template
+				 * This is usually the case when using a user-generated link
+				 */
+				$index = false;
+				foreach($fppdf->index[$form_id] as $i)
+				{
+					if(isset($fppdf->configuration[$i]['template']) && $fppdf->configuration[$i]['template'] == $template)
+					{
+						/* matched by template */
+						return $fppdf->index[$form_id][$i];	
+					}
+				}				
+			}
+			
+			/* there aren't multiples so just return first node */
+			return $fppdf->index[$form_id][0];	
 		}
-		return $index;
-	}
+		return $index;	
+	}		
 }

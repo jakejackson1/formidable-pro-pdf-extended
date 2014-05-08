@@ -166,8 +166,18 @@
 	 */ 
 	public function get_template($form_id, $return_all = false)
 	{
+		global $fp_pdf_default_configuration;
+
 		$template = '';
 		
+		/* Set the default template based on if the default is set */
+		$default_template = self::$default['template'];
+
+		if(is_array($fp_pdf_default_configuration) && sizeof($fp_pdf_default_configuration) > 0 && isset($fp_pdf_default_configuration['template']) )
+		{
+			$default_template = $fp_pdf_default_configuration['template'];
+		}
+
 		if(isset($this->index[$form_id]))
 		{
 			/* 
@@ -180,7 +190,7 @@
 				foreach($this->index[$form_id] as $id)
 				{					
 					$templates[$id] =	array(
-											'template' => (isset($this->configuration[$id]['template'])) ? $this->configuration[$id]['template'] : self::$default['template'],
+											'template' => (isset($this->configuration[$id]['template'])) ? $this->configuration[$id]['template'] : $default_template,
 											'filename' => (isset($this->configuration[$id]['filename'])) ? $this->configuration[$id]['filename'] : FPPDF_Common::get_pdf_filename($form_id, '{entry_id}')
 										);
 				}
@@ -208,31 +218,18 @@
 			
 			 if(strlen($template) == 0)
 			 {
-				$template = FPPDFGenerator::$default['template'];
+				$template = $default_template;
 			 }
 			 return $template;
 		}
 		
 		if( (strlen($template) == 0) && (FPPDF_SET_DEFAULT_TEMPLATE === true))
 		{			
-			/*
-			 * If no PDF template exists then we will use $gf_pdf_default_configuration if it exists.
-			 * If not, we will set the default			 
-			 */ 
-			 global $gf_pdf_default_configuration;
 			 
 			/*
 			 * Check if a default configuration is defined
 			 */			
-			 
-			 if(is_array($gf_pdf_default_configuration) && sizeof($gf_pdf_default_configuration) > 0 && isset($gf_pdf_default_configuration['template']))			 
-			 {
-				return $gf_pdf_default_configuration['template'];	 
-			 }
-			 else
-			 {			 
-				return FPPDFGenerator::$default['template'];
-			 }
+			return $default_template;
 		}			
 		else
 		{
