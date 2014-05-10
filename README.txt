@@ -79,6 +79,20 @@ All FAQs can be [viewed on the Formidable Pro PDF Extended website](http://formi
 
 == Changelog ==
 
+= 1.2.1 =
+* Added auto 'print' prompt feature when PDF opens. Create a link to the PDF and add &print=1 to the URL. Doesn't work with security features enabled.
+* Fixed initilisation notice link so the settings page shows correctly. Previously blank.
+* Fixed problem with the $fp_pdf_default_configuration settings correctly filter down on forms without configuration nodes 
+* Fixed problem setting FPPDF_SET_DEFAULT_TEMPLATE to true.
+* Fixed problem with entries creating and saving PDFs when no node was configured.
+* Fixed problem with PDFs being created and saved when the node wasn't being attached to the notification
+* Fixed issue displaying font initialisation message.
+* Fixed issue using custom font files in PDF.
+* Tidied up the configuration.php file
+* Thanks to the author of Formidable Plus (Trevor Mills) for integrating his updated plugin's table format into the software. This will make his table field much more maintainable as it evolves.
+* Special thanks to Thom Stark for his continual feedback and support. 
+
+
 = 1.2.0 =
 * Fixed date display issue
 * Updated file upload $form_data value

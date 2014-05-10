@@ -70,8 +70,8 @@
 			 * Return Output
 			 */ 
 			 if(results.message)
-			 {
-				 $('#fppdfextended-settings').prepend(results.message).find('.fppdfe_message').delay(5000).slideUp(500, function() {
+			 {		 	
+				 $('#fppdfextended-setting').prepend(results.message).find('.fppdfe_message').delay(5000).slideUp(500, function() {
 					$(this).remove(); 
 				 });
 			 }
@@ -124,7 +124,7 @@
 				 * Show the content panel
 				 */ 
 				$('.tabs-panel').hide();
-				$('#fppdfextended-setting').show(); 
+				$('#PDF_settings, .PDF_settings').show(); 
 				
 				/*
 				 * Set up the tabs

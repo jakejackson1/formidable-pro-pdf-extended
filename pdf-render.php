@@ -201,7 +201,7 @@ class FPPDFRender
 
 		/*
 		 * Set RTL languages at user request
-		 */ 
+		 */ 		
 		 if($arguments['rtl'] === true)
 		 {
 		 	$mpdf->SetDirectionality('rtl');
@@ -230,6 +230,14 @@ class FPPDFRender
 		 		$mpdf->PDFX = true;
 			 	$mpdf->PDFXauto = true;
 		 }		 
+
+		 /*
+		  * Check if we should auto prompt to print the document on open
+		  */
+		  if(isset($_GET['print']))
+		  {
+				$mpdf->SetJS('this.print();');  
+		  }		 
 		 	 
 		/* load HTML block */
 		$mpdf->WriteHTML($html);			

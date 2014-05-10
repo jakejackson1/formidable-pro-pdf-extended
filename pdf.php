@@ -33,7 +33,7 @@ GNU General Public License for more details.
 	/*
 	* Define our constants
 	*/
-	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.1.0'); }
+	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.2.1'); }
 	if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '1.07.01'); }
 	if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6'); }
 
@@ -340,7 +340,7 @@ class FPPDF_Core extends FPPDFGenerator
 		/* exit early if templates not found */
 		if($templates === false)
 		{
-			return;
+			return $actions;
 		}		
 
 		if(is_array($templates))
@@ -357,7 +357,7 @@ class FPPDF_Core extends FPPDFGenerator
 							 $aid = (int) $id + 1;
 							?>
                             <li class="">
-                            	<a target="_blank" href="<?php echo home_url(); ?>/?pdf=1&fid=<?php echo $form_id; ?>&lid=<?php echo $lead_id; ?>&template=<?php echo $t['template']; ?>"><?php echo $name; ?></a>
+                            	<a target="_blank" href="<?php echo home_url(); ?>/?pdf=1&aid=<?php echo $aid; ?>&fid=<?php echo $form_id; ?>&lid=<?php echo $lead_id; ?>&template=<?php echo $t['template']; ?>"><?php echo $name; ?></a>
                             </li>
                             <?php endforeach; ?>
                         </ul>
@@ -403,19 +403,17 @@ class FPPDF_Core extends FPPDFGenerator
 		$ip = FPPDF_Common::getRealIpAddr();
 
 		/*
-		 * Before setting up PDF options we will check if a configuration is found
-		 * If not, we will set up defaults defined in configuration.php
-		 */
-
-		$all_indexes = $this->check_configuration($form_id);
-		$index = $all_indexes[0];
-
-		/*
 		 * Get the template name
-		 * Class: FPPDFGenerator
+		 * Class: PDFGenerator
 		 * File: pdf-configuration-indexer.php
 		 */
-		$template = $this->get_template($form_id);
+		$template = $this->get_template($form_id);				
+		
+		/*
+		 * Before setting up PDF options we will check if a configuration is found
+		 * If not, we will set up defaults defined in configuration.php
+		 */		
+		$index = $this->check_configuration($form_id, $template);	
 
 		/*
 		 * Run if user is not logged in
@@ -497,8 +495,6 @@ class FPPDF_Core extends FPPDFGenerator
 		 }
 
 
-	  switch(rgget('pdf')){
-		case '1':
 
 		$pdf_arguments = $this->generate_pdf_parameters($index, $form_id, $lead_id, $template);
 
@@ -514,7 +510,7 @@ class FPPDF_Core extends FPPDFGenerator
 		$pdf_arguments['output'] = $output;
 
 		$this->render->PDF_Generator($form_id, $lead_id, $pdf_arguments);
-	  }
+
 	  exit();
 	}
 
@@ -568,16 +564,8 @@ class FPPDF_Core extends FPPDFGenerator
 		 {
 				$template = (isset($fppdf->configuration[$index]['template'])) ? $fppdf->configuration[$index]['template'] : '';
 
-				$pdf_arguments = $fppdf->generate_pdf_parameters($index, $form_id, $lead_id, $template);
-
-				/* generate and save default PDF */
-				$filename = $fppdf->render->PDF_Generator($form_id, $lead_id, $pdf_arguments);
-
 				/* Get notifications user wants PDF attached to and check if the correct notifications hook is running */
 				$notifications = $fppdf->get_form_notifications($form, $index);
-
-				/* Set attachment name */
-				$attachment_file = $filename;
 
 				/*
 				 * Premium plugin filter
@@ -589,7 +577,12 @@ class FPPDF_Core extends FPPDFGenerator
 
 				if ($fppdf->check_notification($notification_name, $notifications) || $notification_override === true)
 				{
-					$attachments[] = $attachment_file;
+					$pdf_arguments = $fppdf->generate_pdf_parameters($index, $form_id, $lead_id, $template);
+
+					/* generate and save default PDF */
+					$filename = $fppdf->render->PDF_Generator($form_id, $lead_id, $pdf_arguments);
+
+					$attachments[] = $filename;
 				}
 
 		 }
@@ -696,30 +689,30 @@ class FPPDF_Core extends FPPDFGenerator
 	private function generate_pdf_parameters($index, $form_id, $lead_id, $template = '')
 	{
 
-		$pdf_name = (isset($this->configuration[$index]['filename']) && strlen($this->configuration[$index]['filename']) > 0) ? FPPDF_Common::validate_pdf_name($this->configuration[$index]['filename'], $form_id, $lead_id) : FPPDF_Common::get_pdf_filename($form_id, $lead_id);
-		$template = (isset($template) && strlen($template) > 0) ? $template : $this->get_template($index);
-
-		$pdf_size = (isset($this->configuration[$index]['pdf_size']) && (is_array($this->configuration[$index]['pdf_size']) || strlen($this->configuration[$index]['pdf_size']) > 0)) ? $this->configuration[$index]['pdf_size'] : self::$default['pdf_size'];
-		$orientation = (isset($this->configuration[$index]['orientation']) && strlen($this->configuration[$index]['orientation']) > 0) ? $this->configuration[$index]['orientation'] : self::$default['orientation'];
-		$security = (isset($this->configuration[$index]['security']) && $this->configuration[$index]['security']) ? $this->configuration[$index]['security'] : self::$default['security'];
-		$premium = (isset($this->configuration[$index]['premium']) && $this->configuration[$index]['premium'] === true) ? true: false;
-
-
+		$pdf_name        = (isset($this->configuration[$index]['filename']) && strlen($this->configuration[$index]['filename']) > 0) ? FPPDF_Common::validate_pdf_name($this->configuration[$index]['filename'], $form_id, $lead_id) : FPPDF_Common::get_pdf_filename($form_id, $lead_id);
+		$template        = (isset($template) && strlen($template) > 0) ? $template : $this->get_template($index);
+		
+		$pdf_size        = (isset($this->configuration[$index]['pdf_size']) && (is_array($this->configuration[$index]['pdf_size']) || strlen($this->configuration[$index]['pdf_size']) > 0)) ? $this->configuration[$index]['pdf_size'] : self::$default['pdf_size'];
+		$orientation     = (isset($this->configuration[$index]['orientation']) && strlen($this->configuration[$index]['orientation']) > 0) ? $this->configuration[$index]['orientation'] : self::$default['orientation'];
+		$security        = (isset($this->configuration[$index]['security']) && $this->configuration[$index]['security']) ? $this->configuration[$index]['security'] : self::$default['security'];
+		$premium         = (isset($this->configuration[$index]['premium']) && $this->configuration[$index]['premium'] === true) ? true: false;
+		
+		
 		/*
-		 * Validate privileges
-		 * If blank and security is true then set privileges to all
-		 */
-		$privileges = (isset($this->configuration[$index]['pdf_privileges'])) ? $this->validate_privileges($this->configuration[$index]['pdf_privileges']) : $this->validate_privileges('');
-
-		$pdf_password = (isset($this->configuration[$index]['pdf_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_password'], $form_id, $lead_id) : '';
+		* Validate privileges
+		* If blank and security is true then set privileges to all
+		*/
+		$privileges      = (isset($this->configuration[$index]['pdf_privileges'])) ? $this->validate_privileges($this->configuration[$index]['pdf_privileges']) : $this->validate_privileges('');
+		
+		$pdf_password    = (isset($this->configuration[$index]['pdf_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_password'], $form_id, $lead_id) : '';
 		$master_password = (isset($this->configuration[$index]['pdf_master_password'])) ? FPPDF_Common::do_mergetags($this->configuration[$index]['pdf_master_password'], $form_id, $lead_id) : '';
-		$rtl = (isset($this->configuration[$index]['rtl'])) ? $this->configuration[$index]['rtl'] : false;
-
+		$rtl             = (isset($this->configuration[$index]['rtl'])) ? $this->configuration[$index]['rtl'] : false;
+		
 		/* added in v3.4.0 */
-		$pdfa1b = (isset($this->configuration[$index]['pdfa1b']) && $this->configuration[$index]['pdfa1b'] === true) ? true : false;		
-
+		$pdfa1b          = (isset($this->configuration[$index]['pdfa1b']) && $this->configuration[$index]['pdfa1b'] === true) ? true : false;		
+		
 		/* added in v3.4.0 */
-		$pdfx1a = (isset($this->configuration[$index]['pdfx1a']) && $this->configuration[$index]['pdfx1a'] === true) ? true : false;				
+		$pdfx1a          = (isset($this->configuration[$index]['pdfx1a']) && $this->configuration[$index]['pdfx1a'] === true) ? true : false;				
 
 
 		/*
@@ -735,20 +728,20 @@ class FPPDF_Core extends FPPDFGenerator
 		$rtl             = apply_filters('fppdf_rtl', $rtl, $form_id, $lead_id);
 
 		$pdf_arguments = array(
-			'pdfname' => $pdf_name,
-			'template' =>  $template,
-			'pdf_size' => $pdf_size, /* set to one of the following, or array - in millimeters */
-			'orientation' => $orientation, /* landscape or portrait */
-
-			'security' => $security, /* true or false. if true the security settings below will be applied. Default false. */
-			'pdf_password' => $pdf_password, /* set a password to view the PDF */
-			'pdf_privileges' => $privileges, /* assign user privliages to the PDF */
+			'pdfname'             => $pdf_name,
+			'template'            =>  $template,
+			'pdf_size'            => $pdf_size, /* set to one of the following, or array - in millimeters */
+			'orientation'         => $orientation, /* landscape or portrait */
+			
+			'security'            => $security, /* true or false. if true the security settings below will be applied. Default false. */
+			'pdf_password'        => $pdf_password, /* set a password to view the PDF */
+			'pdf_privileges'      => $privileges, /* assign user privliages to the PDF */
 			'pdf_master_password' => $master_password, /* set a master password to the PDF can't be modified without it */
-			'rtl' => $rtl,
-			'premium' => $premium,
-
-			'pdfa1b'			  => $pdfa1b,			
-			'pdfx1a'			  => $pdfx1a, 				
+			'rtl'                 => $rtl,
+			'premium'             => $premium,
+			
+			'pdfa1b'              => $pdfa1b,			
+			'pdfx1a'              => $pdfx1a, 				
 		);
 
 		return $pdf_arguments;

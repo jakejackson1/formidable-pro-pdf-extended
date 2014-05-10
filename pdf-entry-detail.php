@@ -196,13 +196,27 @@
 			
 			if( $f->type == 'table' && method_exists( 'FrmPlusEntryMetaHelper', 'frmplus_display_value_custom' ) )
 			{
+
+				/* grab the HTML */
 				if ( !self::$frmplus_action_added ){
 					add_action( 'frmplus_field_value_checkbox', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
 					add_action( 'frmplus_field_value_radio', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
 					add_action( 'frmplus_field_value_radioline', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
 					self::$frmplus_action_added = true;
+
+					$table_html = FrmPlusEntryMetaHelper::frmplus_display_value_custom( $prev_val, $f, array() );
 				}
-				$val = FrmPlusEntryMetaHelper::frmplus_display_value_custom( $prev_val, $f, array() );
+
+				if($type == 'array')
+				{
+					$array['field'][$f->id]                = self::get_table_data($f, $table_html, $prev_val);
+					$array['field'][$f->id . '.' . $fname] = $array['field'][$f->id];
+				}
+				else
+				{
+
+					$val = $table_html;
+				}
 			}
 						
 			$val = (!is_array($val)) ? stripslashes($val) : $val;
@@ -317,6 +331,18 @@
 		}
         
         return $content;
+    }
+
+    private static function get_table_data($field, $table_html, $table_data)
+    {
+    	$table_cells = FrmPlusFieldsHelper::get_table_options($field->options);
+
+		return array(
+			'title' => $field->name,
+			'table_html' => $table_html,
+			'table_cells' => $table_cells,
+			'table_data' => $table_data,						
+		);    	
     }
 	
     public static function email_value($value, $meta, $entry){

@@ -11,3 +11,5 @@ Find out more at [http://formidablepropdfextended.com/](http://formidablepropdfe
 All documentation can be found at [http://formidablepropdfextended.com/](http://formidablepropdfextended.com/documentation/).
 
 Note: the software is currently in beta. This should not be used in a production environment.
+
+# Pull Requests Welcome

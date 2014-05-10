@@ -15,7 +15,7 @@
  
  $fp_pdf_default_configuration = array(
  	'template' => 'default-template.php',
-	'pdf_size' => 'A4'	
+	'pdf_size' => 'A4',	
  ); 
  
  /*
@@ -30,7 +30,7 @@
   */
   /*$fp_pdf_config[] = array(
   	'form_id' => 1, 
-	'notifications' => true
+	  'notifications' => true,
   );*/
   
  /*
@@ -45,21 +45,21 @@
   
   /*$fp_pdf_config[] = array(
   	'form_id' => 1, 
-	'template' => 'default-template.php',		
-	'default-show-html' => true
+	  'template' => 'default-template.php',		
+	  'default-show-html' => true,
   );*/  
   
   /*$fp_pdf_config[] = array(
   	'form_id' => 1, 
-	'template' => 'default-template.php',	
-	'default-show-empty' => true
+	  'template' => 'default-template.php',	
+	  'default-show-empty' => true,
   );*/   
   
   /*$fp_pdf_config[] = array(
   	'form_id' => 1, 
-	'template' => 'default-template.php',		
-	'default-show-html' => true,
-	'default-show-empty' => true
+	  'template' => 'default-template.php',		
+	  'default-show-html' => true,
+	  'default-show-empty' => true,
   );*/   
   
  /*
@@ -73,12 +73,12 @@
   
   /*$fp_pdf_config[] = array(
   	'form_id' => 1, 
-	'notifications' => 1 
+	  'notifications' => 1, 
   );*/ 
   
   /*$fp_pdf_config[] = array(
   	'form_id' => '1', 
-	'notifications' => array(1,3,5) 
+	  'notifications' => array(1,3,5), 
   );*/  
   
  /*
@@ -93,16 +93,16 @@
   
   /*$fp_pdf_config[] = array(
   	'form_id' => 1, 
-	'notifications' => 1,
+	  'notifications' => 1,
 		
-	'template' => 'example-float-and-positioning05.php' 
+	  'template' => 'example-float-and-positioning05.php', 
   );*/  
   
   /*$fp_pdf_config[] = array(
   	'form_id' => 2, 
-	'notifications' => 1,
+	  'notifications' => 1,
 	
-	'template' => 'example-basic-html01.php' 
+	  'template' => 'example-basic-html01.php', 
   );*/    
   
  /*
@@ -115,7 +115,7 @@
   
   /*$fp_pdf_config[] = array(
   	'form_id' => array(1,5,6), 
-	'notifications' => true 
+	  'notifications' => true,
   );*/
     
  /*
@@ -126,15 +126,15 @@
   */    
   
   /*$fp_pdf_config[] = array(
-	'form_id' => 1, 
-	'notifications' => true, 
-	'filename' => 'New PDF Name.pdf' 
+  	'form_id' => 1, 
+  	'notifications' => true, 
+  	'filename' => 'New PDF Name.pdf', 
   );*/ 
   
   /*$fp_pdf_config[] = array(
-	'form_id' => 1, 
-	'notifications' => true, 
-	'filename' => 'New PDF Name [id].pdf' 
+  	'form_id' => 1, 
+  	'notifications' => true, 
+  	'filename' => 'New PDF Name [id].pdf' ,
   );*/   
  
  /*
@@ -155,27 +155,27 @@
   
   /* Letter-sized Document */
   /*$fp_pdf_config[] = array(
-	'form_id' => 1,  
-	'notifications' => true,
-		
-	'pdf_size' => 'letter'
+  	'form_id' => 1,  
+  	'notifications' => true,
+  		
+  	'pdf_size' => 'letter',
   );*/
   
   /* Custom PDF Size */
  /* $fp_pdf_config[] = array(
-	'form_id' => 1, 
-	'attachments' => true,	
-	
-	'pdf_size' => array(50, 200)
+  	'form_id' => 1, 
+  	'attachments' => true,	
+  	
+  	'pdf_size' => array(50, 200),
   );*/  
   
   /* Change orientation */
  /* $fp_pdf_config[] = array(
-	'form_id' => 1, 
-	'notifications' => true,	
-	
-	'pdf_size' => 'letter',
-	'orientation' => 'landscape'
+  	'form_id' => 1, 
+  	'notifications' => true,	
+  	
+  	'pdf_size' => 'letter',
+  	'orientation' => 'landscape',
   );*/  
 
  /*
@@ -200,30 +200,30 @@
   */  
   
   /*$fp_pdf_config[] = array(
- 	'form_id' => 1,
-	'notifications' => true,	 
-	'filename' => 'Test.pdf',
-	
-	'orientation' => 'landscape',
-	 
-	'security' => false, 
-	'pdf_password' => 'myPDFpass', 	
-	'pdf_privileges' => array('copy', 'print', 'modify', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-highres'), 	
-	'pdf_master_password' => 'admin password'
+   	'form_id' => 1,
+  	'notifications' => true,	 
+  	'filename' => 'Test.pdf',
+  	
+  	'orientation' => 'landscape',
+  	 
+  	'security' => true, 
+  	'pdf_password' => 'myPDFpass', 	
+  	'pdf_privileges' => array('copy', 'print', 'modify', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-highres'), 	
+  	'pdf_master_password' => 'admin password',
   );*/
   
   /*$fp_pdf_config[] = array(
- 	'form_id' => 1,
-	'notifications' => true,	 
-	'filename' => 'Test2.pdf',
-	'template' => 'example-template.php',
-	
-	'orientation' => 'landscape',
-	 
-	'security' => false, 
-	'pdf_password' => 'myPDFpass', 	
-	'pdf_privileges' => array('copy', 'print', 'modify', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-highres'), 	
-	'pdf_master_password' => 'admin password'
+   	'form_id' => 1,
+  	'notifications' => true,	 
+  	'filename' => 'Test2.pdf',
+  	'template' => 'example-template.php',
+  	
+  	'orientation' => 'landscape',
+  	 
+  	'security' => true, 
+  	'pdf_password' => 'myPDFpass', 	
+  	'pdf_privileges' => array('copy', 'print', 'modify', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-highres'), 	
+  	'pdf_master_password' => 'admin password',
   );*/
  
   /*
@@ -232,11 +232,11 @@
    * Random master password will be generated 
    */
    /*$fp_pdf_config[] = array(
- 	'form_id' => 1,
-	'notifications' => true,	 
-	 
-	'security' => true, 
-	'pdf_password' => 'myPDFpass'
+   	'form_id' => 1,
+  	'notifications' => true,	 
+  	 
+  	'security' => true, 
+  	'pdf_password' => 'myPDFpass',
    );*/
   
   /*
@@ -245,11 +245,11 @@
    * Master password set
    */  
    /*$fp_pdf_config[] = array(
- 	'form_id' => 1,
-	'notifications' => true,	 
-	 
-	'security' => true, 
-	'pdf_master_password' => 'admin password' 
+   	'form_id' => 1,
+  	'notifications' => true,	 
+  	 
+  	'security' => true, 
+  	'pdf_master_password' => 'admin password', 
    );*/   
   
   /*
@@ -259,11 +259,11 @@
    *
    */  
    /*$fp_pdf_config[] = array(
- 	'form_id' => 1,
-	'notifications' => true,	 
-	 
-	'security' => true, 
-	'pdf_privileges' => array('copy', 'print', 'modify', 'print-highres')
+   	'form_id' => 1,
+  	'notifications' => true,	 
+  	 
+  	'security' => true, 
+  	'pdf_privileges' => array('copy', 'print', 'modify', 'print-highres'),
    );*/   
    
   /*
@@ -277,7 +277,7 @@
 	  'form_id' => 1, 
 	  'notifications' => true,
 	
-	  'rtl' => true
+	  'rtl' => true,
    );*/
     
   /*
@@ -289,7 +289,7 @@
   
    /*$fp_pdf_config[] = array(
 	  'form_id' => 1, 
-	  'template' => 'example-template.php'		
+	  'template' => 'example-template.php',		
    );*/    
 
  /* --------------------------------------------------------------- 
@@ -302,13 +302,13 @@
   * will automatically use the default template in the admin area.
   * Set to false to disable this feature.
   */ 
- define('FPPDF_SET_DEFAULT_TEMPLATE', true); 
+ define('FPPDF_SET_DEFAULT_TEMPLATE', false); 
  
  /*
   * MEMORY ISSUES?
   * Try setting the options below to true to help reduce the memory footprint of the package.
   */ 
- define('FP_PDF_ENABLE_MPDF_LITE', false); /* strip out advanced features like advanced table borders, terms and conditions, columns, index, bookmarks and barcodes. */
+ define('FP_PDF_ENABLE_MPDF_LITE', true); /* strip out advanced features like advanced table borders, terms and conditions, columns, index, bookmarks and barcodes. */
  define('FP_PDF_ENABLE_MPDF_TINY', false); /* if your tried the lite version and are still having trouble the tiny version includes the bare minimum features. There's no positioning, float, watermark or form support */
  define('FP_PDF_DISABLE_FONT_SUBSTITUTION', false); /* reduced memory by stopping font substitution */
  define('FP_PDF_ENABLE_SIMPLE_TABLES', false); /* disable the advanced table feature and forces all cells to have the same border, background etc. */

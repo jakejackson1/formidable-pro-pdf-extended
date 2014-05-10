@@ -274,7 +274,7 @@ class FPPDF_InstallUpdater
 				 * Generate configuration information in preparation to write to file
 				 */ 							
 				$write_to_file .= '
-					$this->fontdata[\''.$path_parts['filename'].'\'] = array(
+					$this->fontdata[\''.strtolower($path_parts['filename']).'\'] = array(
 								\'R\' => \''.$path_parts['basename'].'\'
 					);';
 					

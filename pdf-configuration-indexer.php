@@ -63,10 +63,38 @@
 				  * $fp_pdf_config included from configuration.php file
 				  */				 
 				 $this->configuration = (isset($fp_pdf_config)) ? $fp_pdf_config : array();
+
+				 /*
+				  * Merge down the default configuration options
+				  */
+				 foreach($this->configuration as &$node)
+				 {
+				 	$node = $this->merge_defaults($node);
+				 }					 
 		  }
 		  
 		  $this->pdf_config();
 	}
+
+	/**
+	 * Merge the configuration node with the default options, ensuring the config node takes precendent
+	 * @param  array $config the configuration node from $gfpdf->configuration()
+	 * @return array         Merged default/node configuration options 
+	 */
+	private function merge_defaults($config)
+	{
+		global $fp_pdf_default_configuration;
+
+		/*
+		 * If the default settings are set we'll merge them into the configuration index
+		 */
+		if(is_array($fp_pdf_default_configuration) && sizeof($fp_pdf_default_configuration) > 0 && FPPDF_SET_DEFAULT_TEMPLATE === true)
+		{
+			$config = array_replace_recursive($fp_pdf_default_configuration, $config);
+		}
+
+		return $config;		
+	}	
 	
 	/*
 	 * Run through user configuration and set PDF options
@@ -108,7 +136,7 @@
 	 * Check to see if ID is valid
 	 * If so, assign ID => key to index 
 	 */	
-	protected function assign_index($id, $key)
+	public function assign_index($id, $key)
 	{
 		$id = (int) $id;
 		if($id !== 0)
@@ -158,6 +186,39 @@
 		  */
 		 return $this->configuration[$index[0]];
 	}	
+
+	/**
+	 * Get the configuration information based on the form ID
+	 * If multiple nodes assigned to form look for $_GET['aid']
+	 * @param  integer $form_id ID of the form
+	 * @return array          configuration node
+	 */
+	private function pull_config_data($form_id)
+	{
+		if(!isset($this->index[$form_id]))
+		{
+			return false;	
+		}
+
+		$index = $this->index[$form_id];
+		/* 
+		 * Because we now allow multiple PDF templates per form we need a way to get the correct PDF settings
+		 * To do this we use the $_GET variable 'aid'
+		 * If 'aid' is not found we will pull the first entry
+		 * Note: 'aid' has been incremented by 1 so 'aid' === 0 is never found
+		 */
+		 if(isset($_GET['aid']) && (int) $_GET['aid'] > 0)
+		 {
+			$aid = (int) $_GET['aid'] - 1;
+			return $this->configuration[$index[$aid]]; 
+		 }
+		 
+		 /*
+		  * No valid configuration file found so pull the default
+		  */
+		 return $this->configuration[$index[0]];		
+	}
+
 	
 	/*
 	 * Search for the template from a given form id
@@ -176,10 +237,11 @@
 		if(is_array($fp_pdf_default_configuration) && sizeof($fp_pdf_default_configuration) > 0 && isset($fp_pdf_default_configuration['template']) )
 		{
 			$default_template = $fp_pdf_default_configuration['template'];
-		}
+		}		
 
 		if(isset($this->index[$form_id]))
 		{
+
 			/* 
 			 * Show all PDF nodes
 			 */	
@@ -225,7 +287,7 @@
 		
 		if( (strlen($template) == 0) && (FPPDF_SET_DEFAULT_TEMPLATE === true))
 		{			
-			 
+
 			/*
 			 * Check if a default configuration is defined
 			 */			
