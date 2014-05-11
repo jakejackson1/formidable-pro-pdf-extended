@@ -302,7 +302,7 @@
   * will automatically use the default template in the admin area.
   * Set to false to disable this feature.
   */ 
- define('FPPDF_SET_DEFAULT_TEMPLATE', false); 
+ define('FPPDF_SET_DEFAULT_TEMPLATE', true); 
  
  /*
   * MEMORY ISSUES?
