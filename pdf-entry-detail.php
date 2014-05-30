@@ -67,9 +67,8 @@
 
 		}
         
-        foreach($fields as $f){
+        foreach($fields as $f) {
 
-			
 			$fname = $f->name;        
 			
 			if($hidden === true && $f->type == 'html')
@@ -97,7 +96,7 @@
 				}
 				elseif($type == 'array')
 				{
-					$array[$f->id] = $f->description;
+					$array[$f->field_key] = $f->description;
 				}								
 			}
 			
@@ -140,9 +139,10 @@
 						{
 							if (preg_match('/<img src="(.*?)" alt="(.*?)" \/>/i', $val, $matches))
 							{	
-								$array['signature'][$f->id]['img'] = $val;							
-								$array['signature'][$f->id]['url'] = $matches[1];
-								$array['signature'][$f->id]['path'] = str_replace(home_url(). '/', ABSPATH, $matches[1]);							
+
+								$array['signature'][$f->field_key]['img'] = $val;							
+								$array['signature'][$f->field_key]['url'] = $matches[1];
+								$array['signature'][$f->field_key]['path'] = str_replace(home_url(). '/', ABSPATH, $matches[1]);															
 							}
 							
 							continue;
@@ -167,16 +167,16 @@
 				 
 				if($type == 'array')				 
 				{
-					$fname = $f->name;   
-					
-					$array['field'][$f->id] = array(
+					$fname = $f->name;  
+
+					$array['field'][$f->field_key] = array(
 						'title' => $fname,
 						'value' => $val,
 						'label' => $new_val,
-						'string' => implode(', ', $new_val),						
-					);
+						'string' => implode(', ', $new_val),
+					);						
 					
-					$array['field'][$f->id . '.' . $fname] = array(
+					$array['field'][$f->field_key . '.' . $fname] = array(
 						'title' => $fname,
 						'value' => $val,
 						'label' => $new_val,
@@ -210,7 +210,8 @@
 				if($type == 'array')
 				{
 					$array['field'][$f->id]                = self::get_table_data($f, $table_html, $prev_val);
-					$array['field'][$f->id . '.' . $fname] = $array['field'][$f->id];
+					$array['field'][$f->field_key . '.' . $fname] = $array['field'][$f->id];
+					$array['field'][$f->field_key] = $array['field'][$f->id];
 				}
 				else
 				{
@@ -225,8 +226,8 @@
 			{
 				if($type == 'array')				 
 				{			
-					$array['field'][$f->id] = $val;
-					$array['field'][$f->id . '.' . $fname] = $val;
+					$array['field'][$f->field_key . '.' . $fname] = $val;
+					$array['field'][$f->field_key] = $val;
 				}
 				else
 				{
@@ -272,15 +273,16 @@
 			}
 			elseif($type == 'array' && $f->type != 'checkbox' && $f->type != 'select' && $f->type != 'radio' && $f->type != 'table' && $f->type != 'image' && $f->type != 'url' && $f->type != 'file')
 			{
-				$array['field'][$f->id] = array(
-					'title' => $fname,
-					'value' => $val
-				);
 				
-				$array['field'][$f->id . '.' . $fname] = array(
+				$array['field'][$f->field_key . '.' . $fname] = array(
 					'title' => $fname,
 					'value' => $val
-				);				
+				);		
+
+				$array['field'][$f->field_key] = array(
+					'title' => $fname,
+					'value' => $val
+				);										
 			}			
             
             unset($fname);

@@ -88,3 +88,7 @@ padding-bottom: 1.5em;
 #fppdfextended-setting .icon32 {
 display: none;	
 }
+
+#form_entries_page .widefat td, #form_entries_page .widefat th {
+	overflow: visible;
+}

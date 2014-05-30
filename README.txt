@@ -4,7 +4,7 @@ Donate link: http://www.formidablepropdfextended.com
 Tags: formidable, pro, pdf, extended, automation, attachment
 Requires at least: 3.6
 Tested up to: 3.6.1
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,15 @@ All FAQs can be [viewed on the Formidable Pro PDF Extended website](http://formi
 #2. View or download the PDF from a Formidable Pro entry.
 
 == Changelog ==
+
+= 1.3.0 =
+* Changed $form_data array keys to use the unique field key instead of the field ID. This means if you are importing and exporting forms across multiple website your PDF template will function without any additional changes. 
+
+Note: This release isn't backwards compatible with custom PDF templates.
+
+= 1.2.2 = 
+* Fix multi PDF dropdown view cutting off
+* Fix mPDF UTF-8 error
 
 = 1.2.1 =
 * Added auto 'print' prompt feature when PDF opens. Create a link to the PDF and add &print=1 to the URL. Doesn't work with security features enabled.
