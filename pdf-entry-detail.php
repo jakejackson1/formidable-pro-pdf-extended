@@ -38,7 +38,7 @@
             $fields = $frm_field->getAll(array('fi.form_id' => $form_id), 'field_order');
         }
         
-        $content = '';
+        $content = ($type == 'return') ? array() : '';
         $odd = true;
             
         if(!$plain_text && $type === false) {
@@ -69,6 +69,14 @@
         
         foreach($fields as $f) {
 
+        	/*
+        	 * Don't include any fields with the class of 'exclude' if the $type isn't 'array'
+        	 */ 
+        	if($type != 'array' && stripos($f->field_options['classes'], 'exclude') !== false)
+        	{
+        		continue; /* skip this field */
+        	}
+
 			$fname = $f->name;        
 			
 			if($hidden === true && $f->type == 'html')
@@ -97,10 +105,48 @@
 				elseif($type == 'array')
 				{
 					$array[$f->field_key] = $f->description;
-				}								
+					continue;
+				}	
+				elseif($type == 'return')							
+				{
+					$content[] = $f->description;
+				}
+			}
+
+			if($f->type == 'divider')
+			{
+				if($plain_text){
+					$content .= '<div class="section-field"><h2>' . $f->name . '</h2></div><br /><br />';
+				}
+				elseif($type === false)
+				{				
+					$content .= "<tr class='".(($odd) ? 'odd' : 'even')." section-field'><td colspan='2'><h2>{$f->name}</h2></td></tr>";
+					$odd = ($odd) ? false : true;
+					unset($f);
+					continue;
+				}	
+				elseif($type == 'block')
+				{					
+					$content .= "<div class='container section-field ".(($odd) ? 'odd' : 'even')."'><h2>{$f->name}</h2></div>";
+					$odd = ($odd) ? false : true;
+					unset($f);
+					continue;					
+				}
+				elseif($type == 'array')
+				{
+					$array[$f->field_key] = $f->name;
+					continue;
+				}	
+				elseif($type == 'return')							
+				{
+					$content[] = "<div class='container section-field ".(($odd) ? 'odd' : 'even')."'><h2>{$f->name}</h2></div>";
+					$odd = ($odd) ? false : true;
+					unset($f);
+					continue;
+				}				
 			}
 			
-            if(in_array($f->type, array('divider', 'captcha', 'break')))
+            if(in_array($f->type, array('captcha', 'break')))
                 continue;
                 
             if(!isset($entry->metas[$f->id])){
@@ -283,7 +329,12 @@
 					'title' => $fname,
 					'value' => $val
 				);										
-			}			
+			}	
+			elseif($type == 'return')		
+			{
+                $content[] = "<div class='container ".(($odd) ? 'odd' : 'even')."'><div class='title'>" . $fname ."</div><div class='value'>$val</div></div>";
+                $odd = ($odd) ? false : true;		
+			}
             
             unset($fname);
             unset($f);
@@ -320,6 +371,16 @@
 				$array['user_info']['ip']			= $entry->ip;
 				$array['user_info']['user_agent']	= $data['browser'];
 				$array['user_info']['referrer']		= str_replace("\r\n", '<br/>', $data['referrer']);				
+			}
+			else if($type == 'return')
+			{
+				$content[] = "<div class='container ".(($odd) ? 'odd' : 'even')."'><div class='title'>" . $fname ."</div><div class='value'>$val</div></div>";
+				
+                $content[] = "<div class='container ".(($odd) ? 'odd' : 'even')."'><div class='title'>". __('IP Address', 'formidable') . "</div><div class='value'>". $entry->ip ."</div></div>";
+                $odd = ($odd) ? false : true;
+                $content[] = "<div class='container ".(($odd) ? 'odd' : 'even')."'><div class='title'>".__('User-Agent (Browser/OS)', 'formidable') . "</th><td>". $data['browser']."</div></div>";
+                $odd = ($odd) ? false : true;
+                $content[] = "<div class='container ".(($odd) ? 'odd' : 'even')."'><div class='title'>".__('Referrer', 'formidable') . "</th><td>". str_replace("\r\n", '<br/>', $data['referrer']) ."</div></div>";								
 			}
         }
 
