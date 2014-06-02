@@ -2,9 +2,9 @@
 Contributors: blueliquiddesigns
 Donate link: http://www.formidablepropdfextended.com
 Tags: formidable, pro, pdf, extended, automation, attachment
-Requires at least: 3.6
-Tested up to: 3.6.1
-Stable tag: 1.3.0
+Requires at least: 3.9
+Tested up to: 3.9.1
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,12 @@ All FAQs can be [viewed on the Formidable Pro PDF Extended website](http://formi
 #2. View or download the PDF from a Formidable Pro entry.
 
 == Changelog ==
+
+= 1.4.0 =
+* Update mPDF package to latest version. Based on testing, it shouldn't have any major effect on custom templates but does correct padding/margin bugs (which could throw off some heavily-customised templates). 
+* Added a 'return' type when calling FPPDF_Entry::show_entry() which allowed for greater manipulation of the output
+* Added 'section headings' to the default template (previously ignored). These will be added with <h2> tags. 
+* Added ability to exclude fields from the default template by using the 'exclude' class on a form field. 
 
 = 1.3.0 =
 * Changed $form_data array keys to use the unique field key instead of the field ID. This means if you are importing and exporting forms across multiple website your PDF template will function without any additional changes. 
