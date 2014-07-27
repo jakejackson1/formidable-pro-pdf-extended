@@ -209,7 +209,7 @@
 				/*
 				 * Maybe convert the values to options
 				 */
-				 $new_val = self::convert_values_to_name($val, $f->options);
+				 $new_val = self::convert_values_to_name($val, $f->options);				 
 				 
 				if($type == 'array')				 
 				{
@@ -220,13 +220,17 @@
 						'value' => $val,
 						'label' => $new_val,
 						'string' => implode(', ', $new_val),
-					);						
+						'options' => $f->options, /* included in 1.5 */
+						'type' => $f->type, /* included in 1.5 */
+					);											
 					
 					$array['field'][$f->field_key . '.' . $fname] = array(
 						'title' => $fname,
 						'value' => $val,
 						'label' => $new_val,
 						'string' => implode(', ', $new_val),
+						'options' => $f->options, /* included in 1.5 */
+						'type' => $f->type, /* included in 1.5 */
 					);						
 				}
 				else
@@ -255,9 +259,9 @@
 
 				if($type == 'array')
 				{
-					$array['field'][$f->id]                = self::get_table_data($f, $table_html, $prev_val);
+					$array['field'][$f->field_key]                = self::get_table_data($f, $table_html, $prev_val);
 					$array['field'][$f->field_key . '.' . $fname] = $array['field'][$f->id];
-					$array['field'][$f->field_key] = $array['field'][$f->id];
+					$array['field'][$f->field_key]                = $array['field'][$f->id];
 				}
 				else
 				{
@@ -322,12 +326,14 @@
 				
 				$array['field'][$f->field_key . '.' . $fname] = array(
 					'title' => $fname,
-					'value' => $val
+					'value' => $val,
+					'type' => $f->type, /* added in 1.5 */
 				);		
 
 				$array['field'][$f->field_key] = array(
 					'title' => $fname,
-					'value' => $val
+					'value' => $val,
+					'type' => $f->type, /* added in 1.5 */
 				);										
 			}	
 			elseif($type == 'return')		

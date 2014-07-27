@@ -79,6 +79,11 @@ All FAQs can be [viewed on the Formidable Pro PDF Extended website](http://formi
 
 == Changelog ==
 
+= 1.5.0 =
+* $form_data array had a new 'options' key added to radio, select and checkboxes which includes ALL avaliable options in the form. 
+* Most fields had a new 'type' key added, which allows you to easily determine what field type it is. 
+* Fixed bug where Formidable Plus key was still using the old field ID access key instead of new field key access key.
+
 = 1.4.0 =
 * Update mPDF package to latest version. Based on testing, it shouldn't have any major effect on custom templates but does correct padding/margin bugs (which could throw off some heavily-customised templates). 
 * Added a 'return' type when calling FPPDF_Entry::show_entry() which allowed for greater manipulation of the output
