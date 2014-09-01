@@ -124,6 +124,7 @@
 				 * Show the content panel
 				 */ 
 				$('.tabs-panel').hide();
+				$('#PDF_settings .frm_uninstall').remove();
 				$('#PDF_settings, .PDF_settings').show(); 
 				
 				/*
@@ -147,10 +148,12 @@
 				 /*
 				  * If AJAX call already happening exit early
 				  */
-				 if($('.spinner').length > 0)
+
+				 if($('#PDF_settings .spinner').length > 0)
 				 {
 					return false; 
 				 }
+
 				 $('#fppdfextended-setting form').remove();
 				 				 
 				 $('<span class="spinner" style="display: inline-block; margin-top:0; float: none;">').insertAfter($('#font-initialise'));
@@ -179,7 +182,8 @@
 				 /*
 				  * If AJAX call already happening exit early
 				  */
-				 if($('.spinner').length > 0)
+
+				 if($('#PDF_settings .spinner').length > 0)
 				 {
 					return false; 
 				 }

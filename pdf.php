@@ -4,7 +4,7 @@
 Plugin Name: Formidable Pro PDF Extended
 Plugin URI: http://www.formidablepropdfextended.com
 Description: Formidable Pro PDF Extended allows you to save/view/download a PDF from the front- and back-end, and automate PDF creation on form submission. Our Business Plus package also allows you to overlay field onto an existing PDF.
-Version: 1.5.0
+Version: 1.5.1
 Author: Blue Liquid Designs
 Author URI: http://www.blueliquiddesigns.com.au
 
@@ -33,7 +33,7 @@ GNU General Public License for more details.
 	/*
 	* Define our constants
 	*/
-	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.5.0'); }
+	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.5.1'); }
 	if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '1.07.01'); }
 	if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6'); }
 
@@ -825,4 +825,46 @@ class FPPDF_Core extends FPPDFGenerator
 		}
 		return $index;	
 	}		
+}
+
+/*
+ * array_replace_recursive was added in PHP5.3
+ * Add fallback support for those with a version lower than this
+ * and Wordpress still supports PHP5.0 to PHP5.2
+ */
+if (!function_exists('array_replace_recursive'))
+{
+	function array_replace_recursive()
+	{
+	    // Get array arguments
+	    $arrays = func_get_args();
+
+	    // Define the original array
+	    $original = array_shift($arrays);
+
+	    // Loop through arrays
+	    foreach ($arrays as $array)
+	    {
+	        // Loop through array key/value pairs
+	        foreach ($array as $key => $value)
+	        {
+	            // Value is an array
+	            if (is_array($value))
+	            {
+	                // Traverse the array; replace or add result to original array
+	                $original[$key] = array_replace_recursive($original[$key], $array[$key]);
+	            }
+
+	            // Value is not an array
+	            else
+	            {
+	                // Replace or add current value to original array
+	                $original[$key] = $value;
+	            }
+	        }
+	    }
+
+	    // Return the joined array
+	    return $original;
+	} 
 }
