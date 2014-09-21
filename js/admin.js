@@ -124,21 +124,20 @@
 				 * Show the content panel
 				 */ 
 				$('.tabs-panel').hide();
-				$('#PDF_settings .frm_uninstall').remove();
 				$('#PDF_settings, .PDF_settings').show(); 
 				
 				/*
 				 * Set up the tabs
 				 */
 				 $('.frm-category-tabs .active').removeClass('active');
-				 $(".frm-category-tabs [href='#PDF_settings']").parent().addClass('active');
+				 $(".frm-category-tabs [href='#PDF_settings']").parent().addClass('active');				 
 			 }			 			 
 				 
 			/*
 			 * Remove submit button FP auto adds
 			 */ 
-			 $('#fppdfextended-setting .submit').remove();
-			 $('#fppdfextended-setting .frm_uninstall').remove();
+			 $('#PDF_settings .submit').remove();
+			 $('#PDF_settings .frm_uninstall').remove();
 			 
 			/*
 			 * Add AJAX for initialisation
@@ -148,12 +147,11 @@
 				 /*
 				  * If AJAX call already happening exit early
 				  */
-
-				 if($('#PDF_settings .spinner').length > 0)
+				 var $spinner = $('#PDF_settings .spinner');
+				 if($spinner.length > 0)
 				 {
 					return false; 
 				 }
-
 				 $('#fppdfextended-setting form').remove();
 				 				 
 				 $('<span class="spinner" style="display: inline-block; margin-top:0; float: none;">').insertAfter($('#font-initialise'));
@@ -182,8 +180,8 @@
 				 /*
 				  * If AJAX call already happening exit early
 				  */
-
-				 if($('#PDF_settings .spinner').length > 0)
+				 var $spinner = $('#PDF_settings .spinner');
+				 if($spinner.length > 0)
 				 {
 					return false; 
 				 }

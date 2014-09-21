@@ -4,7 +4,7 @@ Donate link: http://www.formidablepropdfextended.com
 Tags: formidable, pro, pdf, extended, automation, attachment
 Requires at least: 3.9
 Tested up to: 3.9.1
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,9 @@ All FAQs can be [viewed on the Formidable Pro PDF Extended website](http://formi
 #2. View or download the PDF from a Formidable Pro entry.
 
 == Changelog ==
+
+= 1.5.2 =
+* Fix up javascript error on initialisation page
 
 = 1.5.1 =
 * Included fallback for PHP5.3+ function array_replace_recursive()
