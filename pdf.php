@@ -4,7 +4,7 @@
 Plugin Name: Formidable Pro PDF Extended
 Plugin URI: http://www.formidablepropdfextended.com
 Description: Formidable Pro PDF Extended allows you to save/view/download a PDF from the front- and back-end, and automate PDF creation on form submission. Our Business Plus package also allows you to overlay field onto an existing PDF.
-Version: 1.5.2
+Version: 1.5.3
 Author: Blue Liquid Designs
 Author URI: http://www.blueliquiddesigns.com.au
 

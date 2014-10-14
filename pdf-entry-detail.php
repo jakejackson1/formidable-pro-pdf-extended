@@ -279,8 +279,9 @@
 					$array['field'][$f->field_key . '.' . $fname] = $val;
 					$array['field'][$f->field_key] = $val;
 				}
-				else
+				elseif(is_array($val))
 				{
+
 					/*
 					 * $val is an array so implode it into a string
 					 */ 
