@@ -150,7 +150,7 @@
                 continue;
                 
             if(!isset($entry->metas[$f->id])){
-                if(!$include_blank)
+                if(!$include_blank && $type != 'array')
                     continue;
                     
                 $entry->metas[$f->id] = '' ;
