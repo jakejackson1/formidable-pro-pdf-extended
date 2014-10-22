@@ -1,8 +1,8 @@
 <?php
 
-	class FPPDF_Entry {
+class FPPDF_Entry {
 		
-		private static $frmplus_action_added = false;
+	private static $frmplus_action_added = false;
 	
     public static function show_entry($atts){
         extract(shortcode_atts(array(
@@ -12,6 +12,7 @@
             'user_info' => false, 
 			'include_blank' => false,
 			'show_html' => false,
+			'conditional' => true,
             'form_id' => false,
 			'hidden' => false,
 			'type' => false /* either false or empty (two column table), block (divs), or array ($form_data array) */
@@ -25,7 +26,8 @@
 		}
          
         $entry = $frm_entry->getOne($id, true);
-        
+     	$post['item_meta'] = $entry->metas;
+
         if(!$entry) {
 			return;
 		}
@@ -68,6 +70,7 @@
 		}
         
         foreach($fields as $f) {
+        	
 
         	/*
         	 * Don't include any fields with the class of 'exclude' if the $type isn't 'array'
@@ -75,6 +78,14 @@
         	if($type != 'array' && stripos($f->field_options['classes'], 'exclude') !== false)
         	{
         		continue; /* skip this field */
+        	}
+
+        	/*
+        	 * Exclude any fields who are conditionally hidden 
+        	 */
+        	if($conditional === true && $type != 'array' && FrmProFieldsHelper::is_field_hidden($f, $post))
+        	{
+        		continue;
         	}
 
 			$fname = $f->name;        
