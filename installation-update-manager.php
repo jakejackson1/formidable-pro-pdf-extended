@@ -13,8 +13,8 @@
  
 class FPPDF_InstallUpdater
 {
-	private static $directory = FP_PDF_PLUGIN_DIR;
-	private static $template_directory = FP_PDF_TEMPLATE_LOCATION;
+	private static $directory               = FP_PDF_PLUGIN_DIR;
+	private static $template_directory      = FP_PDF_TEMPLATE_LOCATION;
 	private static $template_save_directory = FP_PDF_SAVE_LOCATION;
 	private static $template_font_directory = FP_PDF_FONT_LOCATION;
 	
@@ -36,24 +36,15 @@ class FPPDF_InstallUpdater
 	 public static function update_file_paths()
 	 {
 		global $wp_filesystem;
+
 		/*
-		 * We need to set up some filesystem compatibility checkes to work with the different server file management types
-		 * Most notably is the FTP options, but SSH may be effected too
-		 */
-
-		if($wp_filesystem->method === 'ftpext' || $wp_filesystem->method === 'ftpsockets')
-		{
-			/*
-			 * Assume FTP is rooted to the Wordpress install
-			 */ 			 
-			 $base_directory = self::get_base_directory();
-			 
-			 $directory = str_replace(ABSPATH, $base_directory, $directory);
-			 $template_directory = str_replace(ABSPATH, $base_directory, $template_directory);			 		
-			 $template_save_directory = str_replace(ABSPATH, $base_directory, $template_save_directory);			 		
-			 $template_font_directory = str_replace(ABSPATH, $base_directory, $template_font_directory);			 					 
-
-		}		 
+		 * Assume FTP is rooted to the Wordpress install
+		 */ 			 	
+		self::$directory               = self::get_base_directory(FP_PDF_PLUGIN_DIR);
+		self::$template_directory      = self::get_base_directory(FP_PDF_TEMPLATE_LOCATION);
+		self::$template_save_directory = self::get_base_directory(FP_PDF_SAVE_LOCATION);
+		self::$template_font_directory = self::get_base_directory(FP_PDF_FONT_LOCATION);					 	 					 
+		 
 	 }
 	
 	/**
@@ -63,8 +54,7 @@ class FPPDF_InstallUpdater
 	{	
 	    /*
 		 * Initialise the Wordpress Filesystem API
-		 */
-		 
+		 */		
 		ob_start();
 		if(FPPDF_Common::initialise_WP_filesystem_API(array('FP_PDF_DEPLOY'), 'fp-pdf-extended-filesystem') === false)
 		{
@@ -74,7 +64,7 @@ class FPPDF_InstallUpdater
 			exit;
 		}
 		ob_end_clean();					
-		
+
 		/*
 		 * If we got here we should have $wp_filesystem available
 		 */
@@ -86,6 +76,8 @@ class FPPDF_InstallUpdater
 		 */
 		self::update_file_paths();
 
+
+
 		/**
 		 * If FP_PDF_TEMPLATE_LOCATION already exists then we will remove the old template files so we can redeploy the new ones
 		 */
@@ -93,7 +85,7 @@ class FPPDF_InstallUpdater
 		 if(FP_PDF_DEPLOY === true && $wp_filesystem->exists(self::$template_directory))
 		 {
 			 /* read all file names into array and unlink from active theme template folder */
-			 foreach(glob(self::$directory.'templates/*.php') as $file) {
+			 foreach(glob(PDF_PLUGIN_DIR . 'templates/*.php') as $file) {
 				 	$path_parts = pathinfo($file);					
 						if($wp_filesystem->exists(self::$template_directory.$path_parts['basename']))
 						{
@@ -252,7 +244,7 @@ class FPPDF_InstallUpdater
 		 */
 
 		 /* read all file names into array and unlink from active theme template folder */
-		 foreach(glob($fonts_location.'*.[tT][tT][fF]') as $file) {
+		 foreach(glob(FP_PDF_FONT_LOCATION.'*.[tT][tT][fF]') as $file) {
 			 	$path_parts = pathinfo($file);	
 				
 				/*
@@ -514,22 +506,13 @@ class FPPDF_InstallUpdater
 		 */
 		global $wp_filesystem;	
 		
-		/*
-		 * We need to set up some filesystem compatibility checkes to work with the different server file management types
-		 * Most notably is the FTP options, but SSH may be effected too
-		 */
 		
-		if($wp_filesystem->method === 'ftpext' || $wp_filesystem->method === 'ftpsockets')
-		{
-			/*
-			 * Assume FTP is rooted to the Wordpress install
-			 */ 			 
-			 $base_directory = self::get_base_directory();
-			 
-			 $previous_pdf_path = str_replace(ABSPATH, $base_directory, $previous_pdf_path);
-			 $current_pdf_path = str_replace(ABSPATH, $base_directory, $current_pdf_path);			 			 					 
-
-		}						 
+		/*
+		 * Assume FTP is rooted to the Wordpress install
+		 */ 			 	 
+		 $previous_pdf_path = self::get_base_directory($previous_pdf_path);
+		 $current_pdf_path = self::get_base_directory($current_pdf_path);			 			 					 
+					 
 		 
 		 if($wp_filesystem->is_dir($previous_pdf_path))
 		 {
@@ -592,47 +575,6 @@ class FPPDF_InstallUpdater
 		}	
 	}
 	
-	private static function check_access_path($directory, $file_path, $directory_list)
-	{
-		global $wp_filesystem;	
-		
-			//$directory = false;
-			foreach($directory_list as $name => $data)
-			{
-				/*
-				 * Check if one of the file/folder names matches what is in $file_path, make sure it is a directory and 
-				 * the name has a value
-				 */
-				$match = array_search($name, $file_path);
-				if((strlen($name) > 0) && ($match !== false) && ((int) $data['isdir'] === 1) )
-				{
-				
-					/* 
-					 * We have a match but it could be fake
-					 * Look inside the target folder and see if the next folder in $file_path can be found
-					 * If it can we will assume it is the correct path
-					 */
-					 if(isset($file_path[$match+1]))
-					 {
-
-						$next_match = $file_path[$match+1];
-						$directory_list2 = $wp_filesystem->dirlist('/'.$name.'/');
-
-						if(isset($directory_list2[$next_match]) && (int) $directory_list2[$next_match]['isdir'] === 1)
-						{
-							 return self::merge_path($file_path, $match);				 
-						}
-						
-					 }
-					 else
-					 {
-							 return self::merge_path($file_path, $match);					 
-					 }
-				}
-			}	
-			return $directory;	
-	}
-	
 	/*
 	 * Merge the path array back together from the matched key
 	 */	
@@ -645,32 +587,10 @@ class FPPDF_InstallUpdater
 	 * Get the base directory for the current filemanagement type
 	 * In this case it is FTP but may be SSH
 	 */
-	 private static function get_base_directory()
+	 private static function get_base_directory($path = '')
 	 {
-		global $wp_filesystem; 
-		
-		/*
-		 * Assume FTP is rooted to the Wordpress install
-		 */ 
-		 $directory = '/';
-		 
-		 /*
-		  * Test if the FTP is below the Wordpress base by sniffing the base directory 
-		  */
-		$directory_list = $wp_filesystem->dirlist('/');		
-
-		/*
-		 * Use the ABSPATH to compare the directory structure
-		 */
-		$file_path = array_filter(explode('/', ABSPATH ));
-
-		/*
-		 * Rekey the array
-		 */
-		$file_path = array_values($file_path);		
-		
-		return self::check_access_path($directory, $file_path, $directory_list); 
-			 		
+		global $wp_filesystem;
+		return str_replace(ABSPATH, $wp_filesystem->abspath(), $path);			 		
 	 }	
 
 }
