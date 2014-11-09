@@ -90,6 +90,7 @@
 						  */
 						  $url = '<a href="'. site_url() . '/?pdf=1&fid='.$form_id.'&lid='.$lead_id.'&template='.$template .'&nonce='. $nonce ;
 						  $url .= ($download !== false) ? '&download=1' : '';
+						  $url .= ($language !== false) ? '&lang=' . $language : '';
 						  $url .= '">'. $text . '</a>';
 						  
 						  $new_content = str_replace($string, $url, $new_content);
