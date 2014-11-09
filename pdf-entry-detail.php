@@ -269,14 +269,12 @@ class FPPDF_Entry {
 				}
 
 				if($type == 'array')
-				{
+				{				
 					$array['field'][$f->field_key]                = self::get_table_data($f, $table_html, $prev_val);
-					$array['field'][$f->field_key . '.' . $fname] = $array['field'][$f->id];
-					$array['field'][$f->field_key]                = $array['field'][$f->id];
+					$array['field'][$f->field_key . '.' . $fname] = $array['field'][$f->field_key];
 				}
 				else
 				{
-
 					$val = $table_html;
 				}
 			}
