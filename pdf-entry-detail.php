@@ -264,9 +264,9 @@ class FPPDF_Entry {
 					add_action( 'frmplus_field_value_radio', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
 					add_action( 'frmplus_field_value_radioline', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
 					self::$frmplus_action_added = true;
-
-					$table_html = FrmPlusEntryMetaHelper::frmplus_display_value_custom( $prev_val, $f, array() );
 				}
+
+				$table_html = FrmPlusEntryMetaHelper::frmplus_display_value_custom( $prev_val, $f, array() );				
 
 				if($type == 'array')
 				{				
