@@ -4,7 +4,7 @@
 Plugin Name: Formidable Pro PDF Extended
 Plugin URI: http://www.formidablepropdfextended.com
 Description: Formidable Pro PDF Extended allows you to save/view/download a PDF from the front- and back-end, and automate PDF creation on form submission. Our Business Plus package also allows you to overlay field onto an existing PDF.
-Version: 1.5.4
+Version: 1.6.0
 Author: Blue Liquid Designs
 Author URI: http://www.blueliquiddesigns.com.au
 
@@ -33,8 +33,8 @@ GNU General Public License for more details.
 	/*
 	* Define our constants
 	*/
-	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.5.4'); }
-	if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '1.07.01'); }
+	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.6.0'); }
+	if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '2.0b'); }
 	if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6'); }
 
 	if(!defined('FP_PDF_PLUGIN_DIR')) { define('FP_PDF_PLUGIN_DIR', plugin_dir_path( __FILE__ )); }
@@ -50,7 +50,7 @@ GNU General Public License for more details.
 	/*
 	* Do we need to deploy template files this edition? If yes set to true.
 	*/
-	if(!defined('FP_PDF_DEPLOY')) { define('FP_PDF_DEPLOY', true); }
+	if(!defined('FP_PDF_DEPLOY')) { define('FP_PDF_DEPLOY', false); }
 
 	/*
 	* Include the core files
@@ -100,10 +100,6 @@ class FPPDF_Core extends FPPDFGenerator
 		  {
 			 add_action('after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, array('FPPDF_Core', 'add_wp_compatibility_error'));
 			 return;
-		  }
-		  else
-		  {
-			 add_action('after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, array('FPPDF_Core', 'add_documentation_byline'));
 		  }
 
 
@@ -207,18 +203,10 @@ class FPPDF_Core extends FPPDFGenerator
 		 FPPDF_Common::display_wp_compatibility_error();
 	}
 
-	/*
-	 * Display note about documentation
-	 */
-	public static function add_documentation_byline()
-	{
-		 FPPDF_Common::display_documentation_details();
-	}
-
 	/**
 	 * Check to see if Formidable Pro is actually installed
 	 */
-	function gfe_admin_init()
+	public static function gfe_admin_init()
 	{
 
 		/*
@@ -262,7 +250,7 @@ class FPPDF_Core extends FPPDFGenerator
 	}
 
 
-	function detail_pdf_link($record) {
+	public function detail_pdf_link($record) {
 		/*
 		 * Get the template name
 		 * Class: PDFGenerator
@@ -297,10 +285,10 @@ class FPPDF_Core extends FPPDFGenerator
 							$aid = (int) $id + 1;
 							?>
                             <div class="detailed_pdf">
-								<span><?php
+								<div><?php
 									echo $name;
 									$url = home_url() .'/?pdf=1&aid='. $aid .'&fid=' . $form_id . '&lid=' . $lead_id . '&template=' . $val['template'];
-								?></span>
+								?></div>
                                 <a href="<?php echo $url; ?>" target="_blank" class="button">View</a>
 				 				<a href="<?php echo $url.'&download=1'; ?>" target="_blank" class="button">Download</a></div>
 
@@ -324,7 +312,7 @@ class FPPDF_Core extends FPPDFGenerator
         <?php
 	}
 
-	function pdf_link($actions, $entry) {
+	public function pdf_link($actions, $entry) {
 		/*
 		 * Get the template name
 		 * Class: PDFGenerator
@@ -387,7 +375,7 @@ class FPPDF_Core extends FPPDFGenerator
 	 * Handle incoming routes
 	 * Look for $_GET['FP_PDF'] variable, authenticate user and generate/display PDF
 	 */
-	function process_exterior_pages() {
+	public function process_exterior_pages() {
 	  global $wpdb, $frmdb;
 
 	  /*
@@ -528,9 +516,7 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Allow the template/function access to these variables
 		 */
-		global $fppdf, $form_id, $lead_id;
-
-		$notification_name = (isset($args['email_key'])) ? $args['email_key'] : '';
+		global $fppdf, $form_id, $lead_id;		
 
 		/*
 		 * Set data used to determine if PDF needs to be created and attached to notification
@@ -540,6 +526,19 @@ class FPPDF_Core extends FPPDFGenerator
 		$form_id           = $form->id;
 		$lead_id           = apply_filters('fppdfe_lead_id', $args['entry']->id, $form, $args, $fppdf); /* allow premium plugins to override the lead ID */
 		$folder_id 		   = $form_id.$lead_id.'/';
+
+		/*
+		 * Get the notification name 
+		 */		
+		$notification_id = (isset($args['email_key'])) ? $args['email_key'] : '';
+		$notification = get_post($notification_id);
+
+		if(is_wp_error($notification))
+		{
+			return $attachments;
+		}
+
+		$notification_name = $notification->post_title;
 
 		/*
 		 * Before setting up PDF options we will check if a configuration is found
@@ -586,6 +585,7 @@ class FPPDF_Core extends FPPDFGenerator
 				}
 
 		 }
+
 		 return $attachments;
 	}
 
@@ -616,14 +616,13 @@ class FPPDF_Core extends FPPDFGenerator
 	}
 
     public static function get_notifications_name($form) {
-        if(sizeof($form->options['notification']) == 0)
-		{
-            return array();
-		}
+    	$form_id = $form->id;
+       
+    	$emails = FrmFormActionsHelper::get_action_for_form($form_id, 'email'); 
 
         $notifications = array();
-        foreach($form->options['notification'] as $id => $notification) {
-                $notifications[] = $id;
+        foreach($emails as $email) {
+                $notifications[] = $email->post_title;
         }
 
         return $notifications;

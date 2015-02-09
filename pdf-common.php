@@ -43,9 +43,8 @@ class FPPDF_Common
 	  */
 	 public static function is_fully_installed()
 	 {
-		 global $frmpro_is_installed;
 		 
-		 if(!$frmpro_is_installed)
+		 if(!FrmAppHelper::pro_is_installed())
 		 {
 			return false; 
 		 }
@@ -208,18 +207,14 @@ class FPPDF_Common
 		}
 	}
 	
-    public static function is_formidable_supported($version){
-		global $frmpro_is_installed;
-		
-        if( class_exists('FrmProDisplay') )
+    public static function is_formidable_supported($version){				
+        if( class_exists('FrmProDisplay') && FrmAppHelper::pro_is_installed() )
 		{			
-			global $frm_version;
+			$frm_version = FrmAppHelper::$plug_version;
+
             if(version_compare($frm_version, $version, ">=") === true)
 			{
-				 if($frmpro_is_installed)
-				 {
-					return true; 
-				 }								
+				return true; 							
 			}
         }
 		return false;
@@ -244,12 +239,6 @@ class FPPDF_Common
 	{
 		 $message = "Wordpress " . FP_PDF_EXTENDED_WP_SUPPORTED_VERSION . " or higher is required to use this plugin."; 
 		 FPPDF_Common::display_plugin_message($message, true);			
-	}	
-	
-	public static function display_documentation_details()
-	{
-		 $message = sprintf(__("Please review the %sFormidable Pro PDF Extended documentation%s for comprehensive installation instructions."), "<a href='http://formidablepropdfextended.com/documentation-v1/installation-and-configuration/'>", "</a>"); 
-		 FPPDF_Common::display_plugin_message($message);						
 	}	
 	
 	public static function display_plugin_message($message, $is_error = false){

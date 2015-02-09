@@ -50,7 +50,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * Install everything required
 	 */
-	public function pdf_extended_activate()
+	public static function pdf_extended_activate()
 	{	
 	    /*
 		 * Initialise the Wordpress Filesystem API
@@ -285,21 +285,21 @@ class FPPDF_InstallUpdater
 		 return true;
 	}
 	
-	public function fp_pdf_font_install_success()
+	public static function fp_pdf_font_install_success()
 	{
 		echo '<div class="fppdfe_message updated"><p>';
 		echo 'The font files have been successfully installed. A font can be used by adding it\'s file name (without .ttf) in a CSS font-family declaration.';
 		echo '</p></div>';
 	}	
 
-	public function fp_pdf_font_err()
+	public static function fp_pdf_font_err()
 	{
 		echo '<div class="fppdfe_message error"><p>';
 		echo 'There was a problem installing the font files. Manually copy your fonts to the mPDF/ttfonts/ folder.';
 		echo '</p></div>';
 	}	
 	
-	public function fp_pdf_font_config_err()
+	public static function fp_pdf_font_config_err()
 	{
 		echo '<div class="fppdfe_message error"><p>';
 		echo 'Could not create font configuration file. Try initialise again.';
@@ -310,7 +310,7 @@ class FPPDF_InstallUpdater
 	 * Formidable Pro hasn't been installed so throw error.
 	 * We make sure the user hasn't already dismissed the error
 	 */
-	public function fp_pdf_not_installed()
+	public static function fp_pdf_not_installed()
 	{
 		echo '<div class="fppdfe_message error"><p>';
 		echo 'You need to install <a href="http://formidablepro.com/index.php?plugin=wafp&controller=links&action=redirect&l=formidable-pro&a=blue liquid designs" target="ejejcsingle">Formidable Pro</a> to use the Formidable Pro PDF Extended Plugin.';
@@ -320,7 +320,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * PDF Extended has been updated but the new template files haven't been deployed yet
 	 */
-	public function fp_pdf_not_deployed()
+	public static function fp_pdf_not_deployed()
 	{		
 		if( (FP_PDF_DEPLOY === true) && !rgpost('update') )
 		{
@@ -343,7 +343,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * PDF Extended has been freshly installed
 	 */
-	public function fp_pdf_not_deployed_fresh()
+	public static function fp_pdf_not_deployed_fresh()
 	{		
 		if( (FP_PDF_DEPLOY === true) && !rgpost('update') )
 		{
@@ -366,7 +366,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * The Formidable Pro version isn't compatible. Prompt user to upgrade
 	 */
-	public function fp_pdf_not_supported()
+	public static function fp_pdf_not_supported()
 	{
 			echo '<div class="fppdfe_message error"><p>';
 			echo 'Formidable Pro PDF Extended only works with Formidable Pro version '.FP_PDF_EXTENDED_SUPPORTED_VERSION.' and higher. Please <a href="http://formidablepro.com/index.php?plugin=wafp&controller=links&action=redirect&l=formidable-pro&a=blue liquid designs">upgrade your copy of Formidable Pro</a> to use this plugin.';
@@ -377,7 +377,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * Cannot create new template folder in active theme directory
 	 */
-	public function fp_pdf_template_dir_err()
+	public static function fp_pdf_template_dir_err()
 	{
 			echo '<div class="fppdfe_message error"><p>';
 			echo 'We could not create a template folder in your active theme\'s directory. Please make your theme directory writable by your web server and initialise again.';
@@ -395,7 +395,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * Cannot remove old default template files
 	 */
-	public function fp_pdf_deployment_unlink_error()
+	public static function fp_pdf_deployment_unlink_error()
 	{
 			echo '<div class="fppdfe_message error"><p>';
 			echo 'We could not remove the default template files from the Formidable Pro PDF Extended folder in your active theme\'s directory. Please manually remove all files starting with \'default-\', the template.css file and then initialise again.';
@@ -406,7 +406,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * Cannot create new template folder in active theme directory
 	 */
-	public function fp_pdf_template_move_err()
+	public static function fp_pdf_template_move_err()
 	{
 			echo '<div class="fppdfe_message error"><p>';
 			echo 'We could not copy the contents of '.FP_PDF_PLUGIN_DIR.'templates/ to your newly-created FORMIDABLE_PDF_TEMPLATES folder. Please make this directory writable by your web server and initialise again.';
@@ -417,7 +417,7 @@ class FPPDF_InstallUpdater
 	/*
 	 * When switching themes copy over current active theme's PDF_EXTENDED_TEMPLATES (if it exists) to new theme folder
 	 */
-	public function fp_pdf_on_switch_theme($old_theme_name, $old_theme_object) {
+	public static function fp_pdf_on_switch_theme($old_theme_name, $old_theme_object) {
 		
 		/*
 		 * We will store the old pdf dir and new pdf directory and prompt the user to copy the PDF_EXTENDED_TEMPLATES folder
@@ -484,7 +484,7 @@ class FPPDF_InstallUpdater
 	 * The after_switch_theme hook is too early in the initialisation to use request_filesystem_credentials()
 	 * so we have to call this function at a later inteval
 	 */
-	public function do_theme_switch($previous_pdf_path, $current_pdf_path)
+	public static function do_theme_switch($previous_pdf_path, $current_pdf_path)
 	{
 		/*
 		 * Prepare for calling the WP Filesystem
@@ -535,7 +535,7 @@ class FPPDF_InstallUpdater
 	 * Allows you to copy entire folder structures to new location
 	 */
 	
-	public function pdf_extended_copy_directory( $source, $destination, $copy_base = true, $delete_destination = false ) 
+	public static function pdf_extended_copy_directory( $source, $destination, $copy_base = true, $delete_destination = false ) 
 	{
 		global $wp_filesystem;		
 		

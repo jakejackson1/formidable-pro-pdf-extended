@@ -5,10 +5,11 @@
  */ 
  
  add_filter('frm_display_entry_content', array('FP_Custom_Display', 'entries_content'), 10, 6);
- 
+
  
  class FP_Custom_Display
  {
+
 		private static function format_attrs($attrs)
 		{
 			$attr_return = array();

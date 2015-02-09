@@ -12,7 +12,7 @@ class FPPDF_Settings
 	/* 
 	 * Check if we're on the settings page 
 	 */ 
-	public function settings_page() {
+	public static function settings_page() {
 		/*
 		 * Initialise Formidable Settings Page
 		 */
@@ -35,13 +35,13 @@ class FPPDF_Settings
 		return $sections;
 	}
 	
-	private function run_setting_routing()
+	private static function run_setting_routing()
 	{
 		/* 
 		 * Check if we need to redeploy default PDF templates/styles to the theme folder 
 		 */
 		 
-		if( FP_PDF_DEPLOY === true && rgpost('fp_pdf_deploy') && 
+		if( rgpost('fp_pdf_deploy') && 
 		( wp_verify_nonce($_POST['fp_pdf_deploy_nonce'],'fp_pdf_deploy_nonce_action') || wp_verify_nonce($_GET['_wpnonce'],'pdf-extended-filesystem') ) ) {				
 			if(rgpost('upgrade'))
 			{
@@ -59,10 +59,6 @@ class FPPDF_Settings
 			{
 
 			}
-			/*elseif(rgpost('cancel'))
-			{
-				update_option('gf_pdf_extended_deploy', 'yes');	
-			}*/
 		}
 		
 		/*
@@ -83,13 +79,15 @@ class FPPDF_Settings
 					return true; 
 				 }
 			 }
-		 }		
+		 }	
+
+		 return false;	
 	}
 	
 	/*
 	 * Shows the GF PDF Extended settings page
 	 */		
-	public function fppdf_settings_page() 
+	public static function fppdf_settings_page() 
 	{ 
 	    /*
 		 * Run the page's configuration/routing options
@@ -148,7 +146,24 @@ class FPPDF_Settings
                 
                 <input type="submit" value="Initialise Fonts Only" class="button" id="font-initialise" name="font-initialise">                
   
-          <?php } ?>                         
+          <?php } else { ?>     
+				<h2>Welcome to Formidable Pro PDF Extended</h2>
+
+				<p>The plugin has successfully installed and is ready to start automating your documents.</p>
+
+				<p><strong>What's next?</strong> Now you've installed the software you need to configure it. <a href="http://formidablepropdfextended.com/documentation-v1/installation-and-configuration/">Please follow our configuration guide for more details</a>.</p>
+
+				<h2>Have a problem with the software?</h2>
+	
+				<p>Did you switch themes and something went wrong syncing the template folder? Try reinitialise the software.</p>
+
+                <?php wp_nonce_field('fp_pdf_deploy_nonce_action','fp_pdf_deploy_nonce'); ?>
+                <input type="hidden" name="fp_pdf_deploy" value="1">
+
+                <input type="submit" value="Initialise Plugin" class="button" id="plugin-initialise" name="plugin-initialise">
+                
+                <input type="submit" value="Initialise Fonts Only" class="button" id="font-initialise" name="font-initialise">   
+          <?php } ?>
                </div>
 
                <div class="rightcolumn">
@@ -196,7 +211,7 @@ class FPPDF_Settings
 		exit;
 	}
 	
-	public function gf_fp_pdf_deploy_success() {
+	public static function gf_fp_pdf_deploy_success() {
 			$msg = '<div id="fppdfe_message" class="updated"><p>';
 			$msg .= 'You\'ve successfully initialised Formidable Pro PDF Extended.';
 			$msg .= '</p></div>';		
