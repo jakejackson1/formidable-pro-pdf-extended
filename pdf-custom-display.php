@@ -4,7 +4,7 @@
  * Securly allow the shortcode [pdf] to be used in custom displays
  */ 
  
- add_filter('frm_display_entry_content', array('FP_Custom_Display', 'entries_content'), 10, 6);
+ add_filter( 'frm_display_entry_content', 'FP_Custom_Display::entries_content', 10, 6 );
  
  
  class FP_Custom_Display

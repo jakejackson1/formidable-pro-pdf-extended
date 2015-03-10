@@ -41,14 +41,14 @@ class FPPDF_Common
 	 /*
 	  * Check if the system is fully installed and return the correct values
 	  */
-	 public static function is_fully_installed()
-	 {
-		 global $frmpro_is_installed;
+	public static function is_fully_installed() {
+		global $frmpro_is_installed;
 		 
-		 if(!$frmpro_is_installed)
-		 {
-			return false; 
-		 }
+		if ( ! $frmpro_is_installed ) {
+			if ( ! is_callable( 'FrmAppHelper::pro_is_installed' ) || ! FrmAppHelper::pro_is_installed() ){
+				return false;
+			}
+		}
 		 
 		if( (get_option('fp_pdf_extended_installed') != 'installed') || (!is_dir(FP_PDF_TEMPLATE_LOCATION)) )
 		{		
@@ -208,20 +208,36 @@ class FPPDF_Common
 		}
 	}
 	
-    public static function is_formidable_supported($version){
-		global $frmpro_is_installed;
-		
-        if( class_exists('FrmProDisplay') )
-		{			
-			global $frm_version;
-            if(version_compare($frm_version, $version, ">=") === true)
-			{
-				 if($frmpro_is_installed)
-				 {
-					return true; 
-				 }								
+    public static function is_formidable_supported( $version ) {
+		if ( ! class_exists('FrmProDisplay') ) {
+			return false;
+		}
+
+		global $frm_version;
+		if ( $frm_version ) {
+			/**
+			 * Get the plugin version when < 2.0
+			 */
+			$current_frm_version = $frm_version;
+		} else if ( is_callable( 'FrmAppHelper::plugin_version' ) ) {
+			/**
+			 * Get the plugin version when > 2.0
+			 */
+			$current_frm_version = FrmAppHelper::plugin_version();
+		}
+
+		if ( version_compare( $current_frm_version, $version, '>=' ) === true ) {
+			global $frmpro_is_installed;
+			if ( $frmpro_is_installed ) {
+				return true;
 			}
-        }
+
+			/**
+			 * Check if pro is installed in 2.0+
+			 */
+			return ( is_callable( 'FrmAppHelper::pro_is_installed' ) && FrmAppHelper::pro_is_installed() );
+		}
+
 		return false;
     }	
 	

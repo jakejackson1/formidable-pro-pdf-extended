@@ -9,8 +9,7 @@ class FPPDFRender
 	 * var $lead_id integer: The entry id
 	 * var $output string: either view, save or download
 	 * save will save a copy of the PDF to the server using the FP_PDF_SAVE_LOCATION constant
-	 * var $return boolean: if set to true 
-	 it will return the path of the saved PDF
+	 * var $return boolean: if set to true it will return the path of the saved PDF
 	 * var $template string: if you want to use multiple PDF templates - name of the template file
 	 * var $pdfname string: allows you to pass a custom PDF name to the generator e.g. 'Application Form.pdf' (ensure .pdf is appended to the filename)
 	 * var $fpdf boolean: custom hook to allow the FPDF engine to generate PDFs instead of DOMPDF. Premium Paid Feature.
@@ -241,7 +240,7 @@ class FPPDFRender
 		 	 
 		/* load HTML block */
 		$mpdf->WriteHTML($html);			
-		
+
 		switch($output)
 		{
 			case 'download':

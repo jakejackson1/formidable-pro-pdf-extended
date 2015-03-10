@@ -113,22 +113,11 @@
 	/*
 	 * Set the configuration index so it's faster to access template configuration information
 	 */			
-	private function set_form_pdfs()
-	{
-		foreach($this->configuration as $key => $config)
-		{			
-			if(!is_array($config['form_id']))
-			{
-				$this->assign_index($config['form_id'], $key);
+	private function set_form_pdfs() {
+		foreach ( $this->configuration as $key => $config ) {
+			foreach ( (array) $config['form_id'] as $id ) {
+				$this->assign_index( $id, $key );
 			}
-			else
-			{
-				foreach($config['form_id'] as $id)
-				{
-					$this->assign_index($id, $key);
-				}
-			}
-			
 		}
 	}	
 	
@@ -145,7 +134,7 @@
 			 * Assign the outter array with the form ID and the value as the configuration key
 			 */
 			$this->index[$id][] = $key;
-		}		
+		}
 	}
 	
 	/*
