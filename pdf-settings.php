@@ -7,27 +7,24 @@
  * Handles the Formidable Pro Settings page in Wordpress
  */
 
-class FPPDF_Settings
-{
+class FPPDF_Settings {
 	/* 
 	 * Check if we're on the settings page 
 	 */ 
-	public function settings_page() {
+	public static function settings_page() {
 		/*
 		 * Initialise Formidable Settings Page
 		 */
-		if(rgget('page') == 'formidable-settings')
-		{
+		if ( rgget('page') == 'formidable-settings' ) {
 			/*
 			 * Add Formidable Settings Page
 			 */
-			add_filter('frm_add_settings_section', array('FPPDF_Settings', 'add_settings_page'));			
+			add_filter( 'frm_add_settings_section', 'FPPDF_Settings::add_settings_page' );
 		}
 		
 	}
 	
-	public static function add_settings_page($sections)
-	{
+	public static function add_settings_page( $sections ) {
 		$sections['PDF'] = array(
 			'class' => 'FPPDF_Settings',
 			'function' => 'fppdf_settings_page'
@@ -35,8 +32,7 @@ class FPPDF_Settings
 		return $sections;
 	}
 	
-	private function run_setting_routing()
-	{
+	private static function run_setting_routing() {
 		/* 
 		 * Check if we need to redeploy default PDF templates/styles to the theme folder 
 		 */
@@ -89,13 +85,11 @@ class FPPDF_Settings
 	/*
 	 * Shows the GF PDF Extended settings page
 	 */		
-	public function fppdf_settings_page() 
-	{ 
+	public static function fppdf_settings_page() {
 	    /*
 		 * Run the page's configuration/routing options
 		 */ 
-		if(self::run_setting_routing() === true)
-		{
+		if ( self::run_setting_routing() === true ) {
 			return;	
 		}
 		
@@ -187,18 +181,16 @@ class FPPDF_Settings
 		 	ob_end_clean();
 		 	
 			print json_encode(array('error' => $message));
-		 }
-		 else
-		 {
-			 print json_encode(array('message' => self::gf_fp_pdf_deploy_success()));
-		 }
+		} else {
+			print json_encode( array( 'message' => self::pdf_deploy_success() ) );
+		}
 		
 		exit;
 	}
 	
-	public function gf_fp_pdf_deploy_success() {
+	public static function pdf_deploy_success() {
 			$msg = '<div id="fppdfe_message" class="updated"><p>';
-			$msg .= 'You\'ve successfully initialised Formidable Pro PDF Extended.';
+			$msg .= __( 'You\'ve successfully initialised Formidable Pro PDF Extended.', 'ffpdf' );
 			$msg .= '</p></div>';		
 			
 			return $msg;

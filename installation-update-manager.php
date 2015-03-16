@@ -19,8 +19,7 @@ class FPPDF_InstallUpdater
 	private static $template_font_directory = FP_PDF_FONT_LOCATION;
 	
 	
-	public function install() 
-	{
+	public static function install() {
 		if(strlen(get_option('fp_pdf_extended_installed')) == 0)
 		{
 			update_option('fp_pdf_extended_version', FP_PDF_EXTENDED_VERSION);	
@@ -50,8 +49,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * Install everything required
 	 */
-	public function pdf_extended_activate()
-	{	
+	public static function pdf_extended_activate() {
 	    /*
 		 * Initialise the Wordpress Filesystem API
 		 */		
@@ -84,8 +82,8 @@ class FPPDF_InstallUpdater
 
 		 if(FP_PDF_DEPLOY === true && $wp_filesystem->exists(self::$template_directory))
 		 {
-			 /* read all file names into array and unlink from active theme template folder */
-			 foreach(glob(PDF_PLUGIN_DIR . 'templates/*.php') as $file) {
+			/* read all file names into array and unlink from active theme template folder */
+			foreach ( glob( FP_PDF_PLUGIN_DIR . 'templates/*.php') as $file ) {
 				 	$path_parts = pathinfo($file);					
 						if($wp_filesystem->exists(self::$template_directory.$path_parts['basename']))
 						{
@@ -343,8 +341,7 @@ class FPPDF_InstallUpdater
 	/**
 	 * PDF Extended has been freshly installed
 	 */
-	public function fp_pdf_not_deployed_fresh()
-	{		
+	public static function fp_pdf_not_deployed_fresh() {
 		if( (FP_PDF_DEPLOY === true) && !rgpost('update') )
 		{
 			if(rgget("page") == 'fp_settings' && rgget('addon') == 'PDF')
@@ -417,7 +414,7 @@ class FPPDF_InstallUpdater
 	/*
 	 * When switching themes copy over current active theme's PDF_EXTENDED_TEMPLATES (if it exists) to new theme folder
 	 */
-	public function fp_pdf_on_switch_theme($old_theme_name, $old_theme_object) {
+	public static function fp_pdf_on_switch_theme( $old_theme_name, $old_theme_object ) {
 		
 		/*
 		 * We will store the old pdf dir and new pdf directory and prompt the user to copy the PDF_EXTENDED_TEMPLATES folder
@@ -448,8 +445,8 @@ class FPPDF_InstallUpdater
 			/*
 			 * Add admin notification hook to move the files
 			 */	
-			 add_action('admin_notices', array("FPPDF_InstallUpdater", "do_theme_switch_notice")); 	
-			 return true;
+			add_action( 'admin_notices', 'FPPDF_InstallUpdater::do_theme_switch_notice' );
+			return true;
 		}
 		return false;		
 	}
@@ -484,8 +481,7 @@ class FPPDF_InstallUpdater
 	 * The after_switch_theme hook is too early in the initialisation to use request_filesystem_credentials()
 	 * so we have to call this function at a later inteval
 	 */
-	public function do_theme_switch($previous_pdf_path, $current_pdf_path)
-	{
+	public static function do_theme_switch( $previous_pdf_path, $current_pdf_path ) {
 		/*
 		 * Prepare for calling the WP Filesystem
 		 * It only allows post data to be added so we have to manually assign them
@@ -535,8 +531,7 @@ class FPPDF_InstallUpdater
 	 * Allows you to copy entire folder structures to new location
 	 */
 	
-	public function pdf_extended_copy_directory( $source, $destination, $copy_base = true, $delete_destination = false ) 
-	{
+	public static function pdf_extended_copy_directory( $source, $destination, $copy_base = true, $delete_destination = false ) {
 		global $wp_filesystem;		
 		
 		if ( $wp_filesystem->is_dir( $source ) ) 

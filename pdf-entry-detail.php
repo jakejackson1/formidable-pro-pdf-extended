@@ -260,9 +260,9 @@ class FPPDF_Entry {
 
 				/* grab the HTML */
 				if ( !self::$frmplus_action_added ){
-					add_action( 'frmplus_field_value_checkbox', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
-					add_action( 'frmplus_field_value_radio', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
-					add_action( 'frmplus_field_value_radioline', array('FPPDF_Entry', 'convert_checkboxes_to_image') );
+					add_action( 'frmplus_field_value_checkbox', 'FPPDF_Entry::convert_checkboxes_to_image' );
+					add_action( 'frmplus_field_value_radio', 'FPPDF_Entry::convert_checkboxes_to_image' );
+					add_action( 'frmplus_field_value_radioline', 'FPPDF_Entry::convert_checkboxes_to_image' );
 					self::$frmplus_action_added = true;
 				}
 

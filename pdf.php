@@ -7,6 +7,7 @@ Description: Formidable Pro PDF Extended allows you to save/view/download a PDF 
 Version: 1.5.4
 Author: Blue Liquid Designs
 Author URI: http://www.blueliquiddesigns.com.au
+Text Domain: ffpdf
 
 ------------------------------------------------------------------------
 
@@ -34,7 +35,9 @@ GNU General Public License for more details.
 	* Define our constants
 	*/
 	if(!defined('FP_PDF_EXTENDED_VERSION')) { define('FP_PDF_EXTENDED_VERSION', '1.5.4'); }
-	if(!defined('FP_PDF_EXTENDED_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_SUPPORTED_VERSION', '1.07.01'); }
+	if ( ! defined('FP_PDF_EXTENDED_SUPPORTED_VERSION') ) {
+		define( 'FP_PDF_EXTENDED_SUPPORTED_VERSION', '1.07.01' );
+	}
 	if(!defined('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION')) { define('FP_PDF_EXTENDED_WP_SUPPORTED_VERSION', '3.6'); }
 
 	if(!defined('FP_PDF_PLUGIN_DIR')) { define('FP_PDF_PLUGIN_DIR', plugin_dir_path( __FILE__ )); }
@@ -67,14 +70,14 @@ GNU General Public License for more details.
 	/*
 	* Initiate the class after Formidable Pro has been loaded using the init hook.
 	*/
-	add_action('init', array('FPPDF_Core', 'pdf_init'));
-	add_action('admin_init', array('FPPDF_Core', 'admin_init'));
+	add_action( 'init', 'FPPDF_Core::pdf_init' );
+	add_action( 'admin_init', 'FPPDF_Core::admin_init' );
 
 	/*
 	 * Add settings page AJAX listeners
 	 */
-	add_action( 'wp_ajax_fppdfe_initialise', array('FPPDF_Settings', 'ajax_deploy') );
-	add_action( 'wp_ajax_fppdfe_initialise_font', array('FPPDF_Settings', 'initialise_fonts') );
+	add_action( 'wp_ajax_fppdfe_initialise', 'FPPDF_Settings::ajax_deploy' );
+	add_action( 'wp_ajax_fppdfe_initialise_font', 'FPPDF_Settings::initialise_fonts' );
 
 
 class FPPDF_Core extends FPPDFGenerator
@@ -91,19 +94,14 @@ class FPPDF_Core extends FPPDFGenerator
 		  * Check if Formidable Pro is installed before we continue
 		  * Include common functions for test
 		  */
-		  if(FPPDF_Common::is_formidable_supported(FP_PDF_EXTENDED_SUPPORTED_VERSION) === false)
-		  {
-			 add_action('after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, array('FPPDF_Core', 'add_compatibility_error'));
+		  if ( FPPDF_Common::is_formidable_supported( FP_PDF_EXTENDED_SUPPORTED_VERSION ) === false ) {
+			 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Core::add_compatibility_error' );
 			 return;
-		  }
-		  elseif(FPPDF_Common::is_wordpress_supported(FP_PDF_EXTENDED_WP_SUPPORTED_VERSION) === false)
-		  {
-			 add_action('after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, array('FPPDF_Core', 'add_wp_compatibility_error'));
+		  } else if ( FPPDF_Common::is_wordpress_supported( FP_PDF_EXTENDED_WP_SUPPORTED_VERSION ) === false ) {
+			 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Core::add_wp_compatibility_error' );
 			 return;
-		  }
-		  else
-		  {
-			 add_action('after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, array('FPPDF_Core', 'add_documentation_byline'));
+		  } else {
+			 add_action( 'after_plugin_row_' . FP_PDF_EXTENDED_PLUGIN_BASENAME, 'FPPDF_Core::add_documentation_byline' );
 		  }
 
 
@@ -113,10 +111,10 @@ class FPPDF_Core extends FPPDFGenerator
 	    global $fppdf;
 		$fppdf = new FPPDF_Core();
 
-		 /*
-		  * Some functions require the Wordpress Admin area to be fully loaded before we do any processing
-		  */
-		   add_action('wp_loaded', array('FPPDF_Core', 'fully_loaded_admin'));
+		/*
+		 * Some functions require the Wordpress Admin area to be fully loaded before we do any processing
+		 */
+		add_action( 'wp_loaded', 'FPPDF_Core::fully_loaded_admin' );
    }
 
    /*
@@ -143,9 +141,9 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Add our installation/file handling hooks
 		 */
-		add_action('admin_init',  array('FPPDF_Core', 'gfe_admin_init'), 9);
-		add_action('after_switch_theme', array('FPPDF_InstallUpdater', 'fp_pdf_on_switch_theme'), 10, 2);
-		register_activation_hook( __FILE__, array('FPPDF_InstallUpdater', 'install') );
+		add_action( 'admin_init', 'FPPDF_Core::gfe_admin_init', 9 );
+		add_action( 'after_switch_theme', 'FPPDF_InstallUpdater::fp_pdf_on_switch_theme', 10, 2 );
+		register_activation_hook( __FILE__, 'FPPDF_InstallUpdater::install' );
 
 
 		/*
@@ -167,12 +165,12 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Register render class
 		 */
-		 $this->render = new FPPDFRender();
+		$this->render = new FPPDFRender();
 
-		 /*
-		  * Run PDF generate / email code based on version
-		  */
-		  add_filter('frm_notification_attachment', array('FPPDF_Core', 'gfpdfe_create_and_attach_pdf'), 10, 3);
+		/*
+		 * Run PDF generate / email code based on version
+		 */
+		add_filter( 'frm_notification_attachment', 'FPPDF_Core::create_and_attach_pdf', 10, 3 );
 
 	}
 
@@ -218,8 +216,7 @@ class FPPDF_Core extends FPPDFGenerator
 	/**
 	 * Check to see if Formidable Pro is actually installed
 	 */
-	function gfe_admin_init()
-	{
+	public static function gfe_admin_init() {
 
 		/*
 		 * Check if database plugin version matches current plugin version and updates if needed
@@ -238,15 +235,12 @@ class FPPDF_Core extends FPPDFGenerator
 		 */
 		$theme_switch = get_option('gfpdfe_switch_theme');
 
-		if( ( (get_option('fp_pdf_extended_installed') != 'installed') || (!is_dir(FP_PDF_TEMPLATE_LOCATION)) ) && (!rgpost('upgrade') && (empty($theme_switch['old']) ) ) )
-		{
+		if( ( ( get_option('fp_pdf_extended_installed') != 'installed' ) || ( ! is_dir(FP_PDF_TEMPLATE_LOCATION)) ) && ( ! rgpost('upgrade') && ( empty( $theme_switch['old'] ) ) ) ) {
 			/*
 			 * Prompt user to initialise plugin
 			 */
-			 add_action('admin_notices', array("FPPDF_InstallUpdater", "FP_PDF_not_deployed_fresh"));
-		}
-		else
-		{
+			 add_action( 'admin_notices',  'FPPDF_InstallUpdater::FP_PDF_not_deployed_fresh' );
+		} else {
 
 			/**
 			 * Check if deployed new template files after update
@@ -514,8 +508,7 @@ class FPPDF_Core extends FPPDFGenerator
 	  exit();
 	}
 
-	public static function gfpdfe_create_and_attach_pdf($attachments, $form, $args)
-	{
+	public static function create_and_attach_pdf( $attachments, $form, $args ) {
 		$notification = self::do_notification($attachments, $form, $args);
     	return $notification;
 	}
@@ -550,7 +543,6 @@ class FPPDF_Core extends FPPDFGenerator
 		/*
 		 * Check if form is in configuration
 		 */
-
 		if(!$config = $fppdf->get_config($form_id))
 		 {
 			 return $notification;
@@ -560,12 +552,13 @@ class FPPDF_Core extends FPPDFGenerator
 		 * To have our configuration indexes so loop through the PDF template configuration
 		 * and generate and attach PDF files.
 		 */
+
 		 foreach($config as $index)
 		 {
 				$template = (isset($fppdf->configuration[$index]['template'])) ? $fppdf->configuration[$index]['template'] : '';
 
 				/* Get notifications user wants PDF attached to and check if the correct notifications hook is running */
-				$notifications = $fppdf->get_form_notifications($form, $index);
+				$notifications = $fppdf->get_form_notifications( $form, $index, $args );
 
 				/*
 				 * Premium plugin filter
@@ -615,22 +608,7 @@ class FPPDF_Core extends FPPDFGenerator
 		return false;
 	}
 
-    public static function get_notifications_name($form) {
-        if(sizeof($form->options['notification']) == 0)
-		{
-            return array();
-		}
-
-        $notifications = array();
-        foreach($form->options['notification'] as $id => $notification) {
-                $notifications[] = $id;
-        }
-
-        return $notifications;
-    }
-
-	public static function get_form_notifications($form, $index)
-	{
+	public static function get_form_notifications( $form, $index, $args ) {
 		global $fppdf;
 
 		/*
@@ -642,38 +620,20 @@ class FPPDF_Core extends FPPDFGenerator
 		 }
 
 		/*
-		 * Get all notifications
+		 * Get this notification id
 		 */
-		$notifications = self::get_notifications_name($form);
+		$this_notification = $args['email_key'];
 
 		$new_notifications = array();
 
 		/*
 		 * If notifications is true the user wants to attach the PDF to all notifications
 		 */
-		if($fppdf->configuration[$index]['notifications'] === true)
-		{
-			$new_notifications = $notifications;
-		}
-		/*
-		 * Only a single notification is selected
-		 */
-		else if(!is_array($fppdf->configuration[$index]['notifications']))
-		{
-			/*
-			 * Ensure that notification is valid
-			 */
-			 if(in_array($fppdf->configuration[$index]['notifications'], $notifications))
-			 {
-					$new_notifications = array($fppdf->configuration[$index]['notifications']);
-			 }
-		}
-		else
-		{
-			foreach($fppdf->configuration[$index]['notifications'] as $name)
-			{
-				if(in_array($name, $notifications))
-				{
+		if ( $fppdf->configuration[ $index ]['notifications'] === true ) {
+			$new_notifications[] = $this_notification;
+		} else {
+			foreach ( (array) $fppdf->configuration[ $index ]['notifications'] as $name ) {
+				if ( $name == $this_notification ) {
 					$new_notifications[] = $name;
 				}
 			}
