@@ -775,7 +775,7 @@ class FPPDF_Core extends FPPDFGenerator
 					if(isset($fppdf->configuration[$i]['template']) && $fppdf->configuration[$i]['template'] == $template)
 					{
 						/* matched by template */
-						return $fppdf->index[$form_id][$i];	
+						return $i;	
 					}
 				}				
 			}
