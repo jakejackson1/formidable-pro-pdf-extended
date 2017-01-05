@@ -193,7 +193,7 @@ class FPPDF_Common
 		$string = str_replace('[default-message]', '', $string);
 		
 		$entry = $frm_entry->getOne($entry_id, true);
-        $shortcodes = FrmProAppHelper::get_shortcodes($string, $form_id);
+        $shortcodes = FrmProDisplaysHelper::get_shortcodes($string, $form_id);
         return FrmProFieldsHelper::replace_shortcodes($string, $entry, $shortcodes);				
 	}
 	
